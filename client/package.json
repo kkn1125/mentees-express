@@ -1,0 +1,50 @@
+{
+  "name": "mentees_client",
+  "version": "5.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "latest",
+    "@emotion/styled": "latest",
+    "@mui/icons-material": "^5.10.3",
+    "@mui/material": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "aos": "^2.3.4",
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.2",
+    "formik": "^2.2.9",
+    "http-proxy-middleware": "^2.0.6",
+    "react": "latest",
+    "react-cookies": "^0.1.1",
+    "react-dom": "latest",
+    "react-helmet": "^6.1.0",
+    "react-router-dom": "^6.3.0",
+    "react-scripts": "latest",
+    "typescript": "latest",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/aos": "^3.0.4",
+    "@types/react-cookies": "^0.1.0",
+    "@types/react-helmet": "^6.1.5",
+    "@types/react-router-dom": "^5.3.3"
+  }
+}
