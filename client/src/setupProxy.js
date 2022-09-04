@@ -4,10 +4,7 @@ require("dotenv").config({
   path: `.env`,
 });
 
-const {
-  REACT_APP_SERVER_HOST,
-  REACT_APP_SERVER_PORT,
-} = process.env;
+const { REACT_APP_SERVER_HOST, REACT_APP_SERVER_PORT } = process.env;
 
 module.exports = function (app) {
   app.use(

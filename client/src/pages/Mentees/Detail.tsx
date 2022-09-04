@@ -19,7 +19,7 @@ function Detail() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(params.id);
+    console.debug(params.id);
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);

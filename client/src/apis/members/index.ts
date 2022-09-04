@@ -1,21 +1,26 @@
 import axios from "axios";
+import { baseUrl } from "../../utils/tools";
 
-const { REACT_APP_SERVER_HOST, REACT_APP_SERVER_PORT } = process.env;
-
-const findAll = () => {
-  return axios
-    .get(`http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}/api/members`)
-    .then((res) => {
+export default {
+  findAll: () => {
+    return axios.get(baseUrl + `/api/members`).then((res) => {
       if (res.status !== 200) {
         return null;
       }
-      console.log(res);
+      console.debug(res);
       return res.data;
     });
+  },
+  findOne: (id: string) => {
+    return axios.get(baseUrl);
+  },
+  create: (id: string) => {
+    return axios.post(baseUrl);
+  },
+  updateById: (id: string) => {
+    return axios.put(baseUrl);
+  },
+  deleteById: (id: string) => {
+    return axios.delete(baseUrl);
+  },
 };
-
-const findOne = (id: string) => {
-  return axios.get(`http://localhost:`);
-};
-
-export default { findAll };

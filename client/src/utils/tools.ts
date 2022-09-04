@@ -1,5 +1,9 @@
 import * as yup from "yup";
 
+export const { REACT_APP_SERVER_HOST, REACT_APP_SERVER_PORT } = process.env;
+
+export const baseUrl = `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}/api`;
+
 export const BRAND_NAME = "mentees";
 
 export const dummyProducts = [

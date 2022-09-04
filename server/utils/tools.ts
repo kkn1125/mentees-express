@@ -11,3 +11,5 @@ export interface APIResponse extends SuccessResponse, FailResponse {
 
 export const convertLocaleTimezone = (date: Date): Date =>
   new Date(new Date(date).getTime() - 540000);
+
+export const stringLength = (str: string): number => str.length;

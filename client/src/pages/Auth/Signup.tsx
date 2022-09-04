@@ -53,7 +53,7 @@ function Signup() {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log(values);
+      console.debug(values);
     },
   });
 

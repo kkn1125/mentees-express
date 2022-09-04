@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2021",
     "lib": ["dom", "dom.iterable", "esnext", "ES6"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -8,16 +8,19 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
-    // "isolatedModules": true,
+    // "isolatedModules": false,
     "noEmit": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "jsx": "react",
     "strictNullChecks": false,
     "sourceMap": false,
     "noEmitOnError": true
+  },
+  "ts-node": {
+    "esm": true
   },
   "include": ["src"]
 }

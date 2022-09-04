@@ -7,10 +7,10 @@ function CopyButton({ url }: { url: string }) {
   const handleCopy = () => {
     navigator.clipboard.writeText(`${url}`).then(
       () => {
-        console.log("copy!");
+        console.debug("copy!");
       },
       () => {
-        console.log("failed!");
+        console.debug("failed!");
       }
     );
   };

@@ -67,7 +67,7 @@ const reducer = (state: Snacks, action: Action) => {
             }
             return snack;
           })
-          .filter((_) => !_.done),
+          .filter((_) => !_.done || _.id <= action.id),
       };
     default:
       break;

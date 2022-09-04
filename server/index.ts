@@ -1,22 +1,25 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const path = require("path");
-const members = require("./restController/member.rest.controller");
-const db = require("./db/mysqlDatabase");
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
+import authRouter from "./restController/authRestController.js";
+import memberRouter from "./restController/memberRestController.js";
 
-require("dotenv").config();
+dotenv.config();
 
 const { PORT, HOST } = process.env;
 
 const app = express();
+
 app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 // member restController
-app.use("/api", members);
+app.use("/api", memberRouter);
+app.use("/api", authRouter);
 
 app.listen(PORT, () => {
-  console.log(`app listening on port http://${HOST}:${PORT}`);
+  console.debug(`app listening on port http://${HOST}:${PORT}`);
 });
