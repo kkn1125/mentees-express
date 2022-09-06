@@ -3,23 +3,23 @@ import productService from "../service/product.service.js";
 
 const productRouter = router.Router();
 
-productRouter.get("/products", (req: any, res: any) => {
+productRouter.get("/products", (req, res) => {
   productService.findAll(req, res);
 });
 
-productRouter.get("/products/:num", (req: any, res: any) => {
+productRouter.get("/products/:num", (req, res) => {
   productService.findOne(req, res);
 });
 
-productRouter.post("/products", (req: any, res: any) => {
+productRouter.post("/products", (req, res) => {
   productService.create(req, res);
 });
 
-productRouter.put("/products/:num", (req: any, res: any) => {
+productRouter.put("/products/:num", (req, res) => {
   productService.update(req, res);
 });
 
-productRouter.delete("/products/:num", (req: any, res: any) => {
+productRouter.delete("/products/:num", (req, res) => {
   productService.delete(req, res);
 });
 

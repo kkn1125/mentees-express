@@ -1,11 +1,11 @@
 import React, { createContext, useReducer } from "react";
 
-const initialValue = null;
+const initialValue: User = {};
 
 const SAVE = "user/save";
 const RESET = "user/reset";
 
-export const userSave = (user: User): UserAction => ({
+export const userSave = (user: User | KakaoUser): UserAction => ({
   type: SAVE,
   user,
 });

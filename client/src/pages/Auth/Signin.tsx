@@ -12,15 +12,22 @@ import {
 import { useFormik } from "formik";
 import React, { useContext, useState } from "react";
 import { useCookies } from "react-cookie";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { api } from "../../apis";
 import { UserDispatchContext, userSave } from "../../contexts/UserProvider";
 import useSnack from "../../hooks/useSnack";
 import ALERT_COMMENT from "../../utils/alertComment";
-import { emailValidation, passwordValidation } from "../../utils/tools";
+import {
+  authorizeEndpoint,
+  baseUrl,
+  clientBaseUrl,
+  emailValidation,
+  passwordValidation,
+} from "../../utils/tools";
 
 const { SIGN_IN } = ALERT_COMMENT;
+const authorizeUrl = `${baseUrl}${authorizeEndpoint}`;
 
 const inputs: Inputs[] = [
   {
@@ -42,6 +49,7 @@ const validationSchema = yup.object({
 });
 
 function Signin() {
+  const locate = useLocation();
   const userDispatch = useContext(UserDispatchContext);
   const [cookies, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
@@ -82,6 +90,10 @@ function Signin() {
       }, 1000);
     },
   });
+
+  const kakaoLogin = () => {
+    location.href = `${authorizeUrl}?redirect_uri=${clientBaseUrl}`;
+  };
 
   return (
     <Box>
@@ -183,13 +195,23 @@ function Signin() {
                 </Box>
               ))}
             </Stack>
-            <Button variant='contained' type='submit' disabled={cover}>
-              로그인
-            </Button>
+            <Stack sx={{ gap: 1 }}>
+              <Button variant='contained' type='submit' disabled={cover}>
+                로그인
+              </Button>
+              <Button
+                variant='contained'
+                color='warning'
+                type='button'
+                disabled={cover}
+                onClick={kakaoLogin}>
+                카카오 로그인
+              </Button>
+            </Stack>
             <Button
               component={Link}
               to='/'
-              color='secondary'
+              color='inherit'
               variant='contained'
               type='button'>
               메인으로

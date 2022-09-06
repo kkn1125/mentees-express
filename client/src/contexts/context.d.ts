@@ -39,6 +39,13 @@ declare interface User {
   regdate?: Date | null;
   updates?: Date | null;
 }
+declare interface KakaoUser {
+  num?: number | null;
+  cover?: string | null;
+  email?: string | null;
+  id?: string | null;
+  regdate?: Date | null;
+}
 
 /**
  * products types

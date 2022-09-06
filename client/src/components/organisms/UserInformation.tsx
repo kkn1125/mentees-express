@@ -7,7 +7,7 @@ import UserInterest from "../molecules/UserInterest";
 function UserInformation() {
   const user = useContext(UserContext);
 
-  if (!user) return null;
+  if (!user.id) return null;
 
   return (
     <Stack

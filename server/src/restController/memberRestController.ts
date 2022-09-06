@@ -4,27 +4,27 @@ import memberService from "../service/member.service.js";
 
 const memberRouter = router.Router();
 
-memberRouter.get("/members", (req: any, res: any) => {
+memberRouter.get("/members", (req, res) => {
   memberService.findAll(req, res);
 });
 
-memberRouter.get("/members/:num", (req: any, res: any) => {
+memberRouter.get("/members/:num", (req, res) => {
   memberService.findOne(req, res);
 });
 
-memberRouter.get("/members/id/:id", (req: any, res: any) => {
+memberRouter.get("/members/id/:id", (req, res) => {
   memberService.findById(req, res);
 });
 
-memberRouter.post("/members", (req: any, res: any) => {
+memberRouter.post("/members", (req, res) => {
   memberService.create(req, res);
 });
 
-memberRouter.put("/members/:num", authJWT, (req: any, res: any) => {
+memberRouter.put("/members/:num", authJWT, (req, res) => {
   memberService.update(req, res);
 });
 
-memberRouter.delete("/members/:num", (req: any, res: any) => {
+memberRouter.delete("/members/:num", (req, res) => {
   memberService.delete(req, res);
 });
 

@@ -1,8 +1,28 @@
 import * as yup from "yup";
+import { AnyObject } from "yup/lib/object";
 
-export const { REACT_APP_SERVER_HOST, REACT_APP_SERVER_PORT } = process.env;
+export const {
+  REACT_APP_SERVER_HOST,
+  REACT_APP_SERVER_PORT,
+  REACT_APP_KAKAO_AUTHORIZE_PATHNAME,
+  REACT_APP_KAKAO_TOKEN_PATHNAME,
+  REACT_APP_KAKAO_GET_USER_PATHNAME,
+  REACT_APP_KAKAO_LOGOUT_PATHNAME,
+  REACT_APP_KAKAO_API_HOST,
+  REACT_APP_HOST,
+  REACT_APP_PORT,
+} = process.env;
 
 export const baseUrl = `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}/api`;
+
+export const serverBaseUrl = `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}`;
+export const clientBaseUrl = `http://${REACT_APP_HOST}:${REACT_APP_PORT}`;
+
+export const authorizeEndpoint = REACT_APP_KAKAO_AUTHORIZE_PATHNAME;
+export const tokenEndpoint = REACT_APP_KAKAO_TOKEN_PATHNAME;
+export const getUserEndpoint = REACT_APP_KAKAO_GET_USER_PATHNAME;
+export const logoutEndpoint = REACT_APP_KAKAO_LOGOUT_PATHNAME;
+export const kapiUrl = REACT_APP_KAKAO_API_HOST;
 
 export const BRAND_NAME = "mentees";
 
@@ -73,3 +93,21 @@ export const passwordValidation = yup
     "비밀번호는 숫자 + 소문자 + 대문자 + 특수문자로 구성되어야 합니다. (대문자 및 특수문자는 최소 1자 이상 포함되어야 합니다."
   )
   .required("이메일은 필수 항목 입니다.");
+
+export const objectToQueryString = (obj: object): string =>
+  Object.entries(obj).reduce(
+    (acc, cur, cid, o) =>
+      (acc +=
+        cur[0] +
+        "=" +
+        encodeURIComponent(cur[1]) +
+        (cid !== o.length - 1 ? "&" : "")),
+    ""
+  );
+
+export const queryStringToObject = (query: string) =>
+  Object.fromEntries(
+    (query.startsWith("?") ? query.slice(1) : query)
+      .split("&")
+      .map((q) => q.split("="))
+  );

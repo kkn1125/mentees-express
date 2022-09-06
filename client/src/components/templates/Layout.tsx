@@ -3,10 +3,9 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import React, { memo, useContext, useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../apis";
 import {
-  ProductContext,
   ProductDispatchContext,
   productsLoad,
 } from "../../contexts/ProductProvider";
@@ -16,17 +15,18 @@ import {
   UserDispatchContext,
   userSave,
 } from "../../contexts/UserProvider";
-import {
-  REACT_APP_SERVER_HOST,
-  REACT_APP_SERVER_PORT,
-} from "../../utils/tools";
+import useSnack from "../../hooks/useSnack";
+import { queryStringToObject, serverBaseUrl } from "../../utils/tools";
 import StackableSnackbar from "../molecules/StackableSnackbar";
 import Footer from "./Footer";
 import Header from "./Header";
 
 function Layout() {
   const locate = useLocation();
+  const navigate = useNavigate();
+  const { errorSnack } = useSnack();
   const snacks = useContext(SnackContext);
+  const { successSnack } = useSnack();
   const users = useContext(UserContext);
   const userDispatch = useContext(UserDispatchContext);
   const [cookies, setCookie] = useCookies(["token"]);
@@ -34,15 +34,35 @@ function Layout() {
 
   useEffect(() => {
     AOS.init();
-    const sse = new EventSource(
-      `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}` +
-        "/sse/broadcast"
-    );
+    const sse = new EventSource(serverBaseUrl + "/sse/broadcast");
 
-    sse.addEventListener("broadcast", (e) => {
+    const productBroadcast = (e) => {
       const products = JSON.parse(e.data);
       productDispatch(productsLoad(products));
-    });
+    };
+
+    sse.addEventListener("broadcast", productBroadcast);
+
+    const queryMap = queryStringToObject(locate.search);
+    const kakaoLogin = async () => {
+      const { data } = await api.kakao.token(queryMap.code);
+      if (data.ok) {
+        setCookie("token", data.payload, { path: "/" });
+        navigate("/");
+        successSnack("카카오 계정 로그인에 성공했습니다.");
+      }
+
+      return data;
+    };
+    if (queryMap.code) {
+      kakaoLogin().catch((e) => {
+        errorSnack(e.message);
+        navigate("/auth/signin");
+      });
+    }
+    return () => {
+      sse.removeEventListener("broadcast", productBroadcast);
+    };
   }, []);
 
   useEffect(() => {
@@ -50,13 +70,32 @@ function Layout() {
     document.body.scrollIntoView(true);
 
     const checkToken = () => Boolean(token);
-    const checkUser = () => Boolean(users);
+    const checkUser = () => Boolean(users.num);
     if (!checkUser() && checkToken()) {
-      api.members.findOne(token.user_num).then((foundUser) => {
-        userDispatch(userSave(foundUser.data.payload[0]));
-      });
+      if (!token.access_token) {
+        api.members.findOne(token.user_num).then((foundUser) => {
+          userDispatch(userSave(foundUser.data.payload[0]));
+        });
+      } else {
+        api.kakao
+          .getUserData(
+            cookies.token.access_token,
+            `["kakao_account.profile", "kakao_account.name", "kakao_account.email"]`
+          )
+          .then((result) => {
+            const { payload } = result.data;
+            const kakaouser = {
+              num: payload.id,
+              cover: payload.kakao_account.profile.thumbnail_image_url,
+              email: payload.kakao_account.email,
+              id: payload.kakao_account.profile.nickname,
+              regdate: payload.connected_at,
+            };
+            userDispatch(userSave(kakaouser));
+          });
+      }
     }
-  }, [locate.pathname]);
+  }, [locate.pathname, cookies.token]);
 
   return (
     <Stack sx={{ overflow: "hidden", minHeight: "100%" }}>

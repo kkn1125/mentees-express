@@ -12,6 +12,7 @@ import { fileURLToPath } from "url";
 import authRouter from "./src/restController/authRestController.js";
 import memberRouter from "./src/restController/memberRestController.js";
 import productRouter from "./src/restController/productRestController.js";
+import oauthRouter from "./src/restController/kakaoRestController.js";
 import sseRouter from "./src/sse/index.js";
 
 dotenv.config();
@@ -45,6 +46,8 @@ if (process.env.NODE_ENV === "production") {
 app.use("/api", authRouter);
 app.use("/api", memberRouter);
 app.use("/api", productRouter);
+app.use("/api/k", oauthRouter);
+
 app.use("/sse", sseRouter);
 
 app.listen(PORT, () => {

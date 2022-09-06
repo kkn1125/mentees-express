@@ -3,7 +3,7 @@ import { APIResponse } from "../utils/tools.js";
 import Product from "../models/product.js";
 import sql from "../db/mysqlDatabase.js";
 
-Product.findAll = (req: any, res: any) => {
+Product.findAll = (req, res) => {
   sql.query("SELECT * FROM product", (error: any, rows: any) => {
     try {
       if (error) {
@@ -22,7 +22,7 @@ Product.findAll = (req: any, res: any) => {
   });
 };
 
-Product.findOne = (req: any, res: any) => {
+Product.findOne = (req, res) => {
   const { num } = req.params;
 
   sql.query(
@@ -60,12 +60,12 @@ Product.findOne = (req: any, res: any) => {
   );
 };
 
-Product.create = (req: any, res: any) => {
+Product.create = (req, res) => {
   sql.query("INSERT INTO product SET ?", req.body, (error: any, rows: any) => {
     try {
       if (error) {
         res.status(500).json({
-          fail: true,
+          ok: false,
           message: error.message || "Not found products",
         });
       }
@@ -83,7 +83,7 @@ Product.create = (req: any, res: any) => {
   });
 };
 
-Product.update = (req: any, res: any) => {
+Product.update = (req, res) => {
   sql.query(
     "UPDATE product SET ? WHERE ?",
     [req.body, req.params],
@@ -91,12 +91,12 @@ Product.update = (req: any, res: any) => {
       try {
         if (error) {
           res.status(400).json({
-            fail: true,
+            ok: false,
             message: error.message || "Not found products",
           });
         } else if (rows.affectedRows === 0) {
           res.status(404).json({
-            fail: true,
+            ok: false,
             message: "상품 정보가 없습니다.",
           });
         }
@@ -111,7 +111,7 @@ Product.update = (req: any, res: any) => {
   );
 };
 
-Product.delete = (req: any, res: any) => {
+Product.delete = (req, res) => {
   sql.query(
     "DELETE FROM product WHERE ?",
     req.params,
@@ -119,12 +119,12 @@ Product.delete = (req: any, res: any) => {
       try {
         if (error) {
           res.status(400).json({
-            fail: true,
+            ok: false,
             message: error.message || "Not found products",
           });
         } else if (rows.affectedRows === 0) {
           res.status(404).json({
-            fail: true,
+            ok: false,
             message: "상품 정보가 없습니다.",
           });
         }

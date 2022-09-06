@@ -3,11 +3,14 @@ import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { api } from "../../apis";
 import {
   UserContext,
   UserDispatchContext,
   userReset,
 } from "../../contexts/UserProvider";
+import useSnack from "../../hooks/useSnack";
+import { clientBaseUrl } from "../../utils/tools";
 import Logo from "../atoms/Logo";
 import ScrollTop from "../atoms/ScrollTop";
 import ResponsiveMenuList from "../molecules/MenuList";
@@ -32,42 +35,59 @@ const pages: MenuItems[] = [
 ];
 
 const Header = () => {
+  const { successSnack, errorSnack } = useSnack();
   const userDispatch = useContext(UserDispatchContext);
   const user = useContext(UserContext);
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
-  const [userMenu, setUserMenu] = useState([
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const userMenu = [
     {
       name: "Profile",
-      url: "/profile",
-      show: true,
+      url: "/mentees/profile",
+      show: isLoggedIn,
     },
     {
       name: "Signin",
       url: "/auth/signin",
-      show: false,
+      show: !isLoggedIn,
     },
     {
       name: "Logout",
-      // url: "/auth/logout",
-      show: true,
+      show: isLoggedIn,
       handler: () => {
-        console.log(1);
-        removeCookie("token", {
-          path: "/",
-        });
-        userDispatch(userReset());
+        if (cookies.token.access_token) {
+          // kakao logout
+          api.kakao
+            .logout(clientBaseUrl)
+            .then((result) => {
+              const { data } = result;
+              if (data.ok) {
+                successSnack(data.message);
+                removeCookie("token", {
+                  path: "/",
+                });
+                userDispatch(userReset());
+              } else {
+                throw new Error("카카오 로그아웃에 실패했습니다.");
+              }
+            })
+            .catch((e) => {
+              errorSnack(e.message || "카카오 로그아웃에 실패했습니다.");
+            });
+        } else {
+          successSnack("로그아웃 되었습니다.");
+          removeCookie("token", {
+            path: "/",
+          });
+          userDispatch(userReset());
+        }
       },
     },
-  ]);
+  ];
 
   useEffect(() => {
-    setUserMenu(
-      userMenu.map((u) => ({
-        ...u,
-        show: !u.show
-      }))
-    );
-  }, [user]);
+    setIsLoggedIn(Boolean(user) && Boolean(cookies.token));
+  }, [user, cookies.token]);
 
   return (
     <AppBar position='fixed' color='inherit'>

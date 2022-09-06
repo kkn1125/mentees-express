@@ -6,7 +6,7 @@ import sql from "../db/mysqlDatabase.js";
 import jwtUtil from "../utils/jwt-util.js";
 const saltRounds = 10;
 
-Member.signin = (req: any, res: any) => {
+Member.signin = (req, res) => {
   const token = jwtUtil.sign({ email: req.body.email });
   const refreshToken = jwtUtil.refresh();
   sql.query(
@@ -47,7 +47,7 @@ Member.signin = (req: any, res: any) => {
   );
 };
 
-Member.findAll = (req: any, res: any) => {
+Member.findAll = (req, res) => {
   sql.query("SELECT * FROM member", (error: any, rows: any) => {
     try {
       if (error) {
@@ -66,7 +66,7 @@ Member.findAll = (req: any, res: any) => {
   });
 };
 
-Member.findOne = (req: any, res: any) => {
+Member.findOne = (req, res) => {
   const { num } = req.params;
 
   sql.query(
@@ -104,7 +104,7 @@ Member.findOne = (req: any, res: any) => {
   );
 };
 
-Member.findById = (req: any, res: any) => {
+Member.findById = (req, res) => {
   const { id } = req.params;
 
   sql.query(
@@ -137,7 +137,7 @@ Member.findById = (req: any, res: any) => {
   );
 };
 
-Member.create = (req: any, res: any) => {
+Member.create = (req, res) => {
   const { pw } = req.body;
   bcrypt.hash(pw, saltRounds, (err, hash) => {
     req.body.pw = hash;
@@ -146,7 +146,7 @@ Member.create = (req: any, res: any) => {
       try {
         if (error) {
           res.status(500).json({
-            fail: true,
+            ok: false,
             message: error.message || "Not found members",
           });
         }
@@ -162,7 +162,7 @@ Member.create = (req: any, res: any) => {
   });
 };
 
-Member.update = (req: any, res: any) => {
+Member.update = (req, res) => {
   const { pw } = req.body;
   bcrypt.hash(pw, saltRounds, (err, hash) => {
     if (hash) {
@@ -176,12 +176,12 @@ Member.update = (req: any, res: any) => {
         try {
           if (error) {
             res.status(400).json({
-              fail: true,
+              ok: false,
               message: error.message || "Not found members",
             });
           } else if (rows.affectedRows === 0) {
             res.status(404).json({
-              fail: true,
+              ok: false,
               message: "계정 정보가 없습니다.",
             });
           }
@@ -197,7 +197,7 @@ Member.update = (req: any, res: any) => {
   });
 };
 
-Member.delete = (req: any, res: any) => {
+Member.delete = (req, res) => {
   sql.query(
     "DELETE FROM member WHERE ?",
     req.params,
@@ -205,12 +205,12 @@ Member.delete = (req: any, res: any) => {
       try {
         if (error) {
           res.status(400).json({
-            fail: true,
+            ok: false,
             message: error.message || "Not found members",
           });
         } else if (rows.affectedRows === 0) {
           res.status(404).json({
-            fail: true,
+            ok: false,
             message: "계정 정보가 없습니다.",
           });
         }

@@ -1,5 +1,5 @@
 import { Alert, Box, Container, Stack } from "@mui/material";
-import React, { useContext, useEffect, useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import ImageSlider from "../components/atoms/ImageSlider";
 import FeedbackCard from "../components/molecules/FeedbackCard";
 import MenteeCard from "../components/molecules/MenteeCard";
@@ -8,7 +8,7 @@ import SectionTitle from "../components/molecules/SectionTitle";
 import SkillSet from "../components/molecules/SkillSet";
 import UserInformation from "../components/organisms/UserInformation";
 import { ProductContext } from "../contexts/ProductProvider";
-import { dummyFeedbacks, dummyProducts } from "../utils/tools";
+import { dummyFeedbacks } from "../utils/tools";
 
 const imageList = [
   "http://localhost:8050/resources/img/cover/ab01.jpg",
@@ -17,7 +17,6 @@ const imageList = [
 
 function Home() {
   const products = useContext(ProductContext);
-
   const productList = useMemo(
     () =>
       products.map((contents, idx) => (
