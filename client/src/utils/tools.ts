@@ -56,6 +56,9 @@ export const dummyFeedbacks = [
   },
 ];
 
+export const orElseImage = (src: string) =>
+  !src || src.trim() === "" ? "/assets/sample.jpg" : src;
+
 export const emailValidation = yup
   .string()
   .matches(

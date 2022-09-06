@@ -10,7 +10,7 @@ Member.signin = (req: any, res: any) => {
   const token = jwtUtil.sign({ email: req.body.email });
   const refreshToken = jwtUtil.refresh();
   sql.query(
-    "SELECT pw FROM member WHERE email=?",
+    "SELECT * FROM member WHERE email=?",
     req.body.email,
     (err, rows) => {
       bcrypt.compare(req.body.pw, rows[0].pw, (err, same) => {
@@ -23,11 +23,14 @@ Member.signin = (req: any, res: any) => {
           }
 
           if (same) {
+            const { pw, ...user } = rows[0];
             res.status(200).json({
               ok: true,
               payload: {
                 token,
                 refreshToken,
+                user_num: user.num,
+                user: user,
               },
             });
           } else {
@@ -36,7 +39,9 @@ Member.signin = (req: any, res: any) => {
               message: "패스워드가 일치하지 않습니다.",
             });
           }
-        } catch (e) {}
+        } catch (e: any) {
+          /** */
+        }
       });
     }
   );
@@ -55,7 +60,7 @@ Member.findAll = (req: any, res: any) => {
         ok: true,
         payload: rows,
       } as APIResponse);
-    } catch (e) {
+    } catch (e: any) {
       /** */
     }
   });
@@ -92,7 +97,40 @@ Member.findOne = (req: any, res: any) => {
           ok: true,
           payload: rows,
         } as APIResponse);
-      } catch (e) {
+      } catch (e: any) {
+        /** */
+      }
+    }
+  );
+};
+
+Member.findById = (req: any, res: any) => {
+  const { id } = req.params;
+
+  sql.query(
+    "SELECT * FROM member WHERE ?",
+    req.params,
+    (error: any, rows: any) => {
+      try {
+        if (error) {
+          res.status(500).json({
+            ok: false,
+            message: error.message,
+          });
+        } else if (!id.trim()) {
+          res.status(400).json({ ok: false, message: "파라미터가 없습니다." });
+        } else if (rows.length === 0) {
+          res.status(404).json({
+            ok: false,
+            message: "계정 정보가 없습니다.",
+          });
+        }
+
+        res.json({
+          ok: true,
+          payload: rows,
+        } as APIResponse);
+      } catch (e: any) {
         /** */
       }
     }
@@ -117,7 +155,7 @@ Member.create = (req: any, res: any) => {
           ok: true,
           payload: rows,
         } as APIResponse);
-      } catch (e) {
+      } catch (e: any) {
         /** */
       }
     });
@@ -141,12 +179,17 @@ Member.update = (req: any, res: any) => {
               fail: true,
               message: error.message || "Not found members",
             });
+          } else if (rows.affectedRows === 0) {
+            res.status(404).json({
+              fail: true,
+              message: "계정 정보가 없습니다.",
+            });
           }
           res.status(201).json({
             ok: true,
             payload: rows,
           } as APIResponse);
-        } catch (e) {
+        } catch (e: any) {
           /** */
         }
       }
@@ -165,12 +208,17 @@ Member.delete = (req: any, res: any) => {
             fail: true,
             message: error.message || "Not found members",
           });
+        } else if (rows.affectedRows === 0) {
+          res.status(404).json({
+            fail: true,
+            message: "계정 정보가 없습니다.",
+          });
         }
         res.json({
           ok: true,
           payload: rows,
         } as APIResponse);
-      } catch (e) {
+      } catch (e: any) {
         /** */
       }
     }

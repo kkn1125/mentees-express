@@ -2,19 +2,19 @@ import { AlertColor } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import {
   snackAdd,
+  SnackContext,
   SnackDispatchContext,
-  SnackIdxContext,
 } from "../contexts/SnackbarProvider";
 
 function useSnack() {
-  const snackId = useContext(SnackIdxContext);
+  const snack = useContext(SnackContext);
   const dispatch = useContext(SnackDispatchContext);
 
   return {
     successSnack: (message: string) =>
       dispatch(
         snackAdd({
-          id: snackId,
+          id: snack.count,
           message: message,
           done: false,
           color: "success",
@@ -23,7 +23,7 @@ function useSnack() {
     infoSnack: (message: string) =>
       dispatch(
         snackAdd({
-          id: snackId,
+          id: snack.count,
           message: message,
           done: false,
           color: "info",
@@ -32,7 +32,7 @@ function useSnack() {
     warningSnack: (message: string) =>
       dispatch(
         snackAdd({
-          id: snackId,
+          id: snack.count,
           message: message,
           done: false,
           color: "warning",
@@ -41,7 +41,7 @@ function useSnack() {
     errorSnack: (message: string) =>
       dispatch(
         snackAdd({
-          id: snackId,
+          id: snack.count,
           message: message,
           done: false,
           color: "error",

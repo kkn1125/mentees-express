@@ -2,6 +2,7 @@
   "name": "mentees_server",
   "version": "5.0.0",
   "private": true,
+  "main": "index.ts",
   "type": "module",
   "scripts": {
     "start": "nodemon --watch server/ --exec \"npx\" \"ts-node\" index.ts"
@@ -19,6 +20,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "better-sse": "^0.8.0",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",

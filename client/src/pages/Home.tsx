@@ -1,38 +1,41 @@
-import { Box, Container, Stack } from "@mui/material";
-import React from "react";
+import { Alert, Box, Container, Stack } from "@mui/material";
+import React, { useContext, useEffect, useMemo } from "react";
+import ImageSlider from "../components/atoms/ImageSlider";
 import FeedbackCard from "../components/molecules/FeedbackCard";
 import MenteeCard from "../components/molecules/MenteeCard";
 import ProgramCard from "../components/molecules/ProgramCard";
 import SectionTitle from "../components/molecules/SectionTitle";
 import SkillSet from "../components/molecules/SkillSet";
 import UserInformation from "../components/organisms/UserInformation";
+import { ProductContext } from "../contexts/ProductProvider";
 import { dummyFeedbacks, dummyProducts } from "../utils/tools";
 
+const imageList = [
+  "http://localhost:8050/resources/img/cover/ab01.jpg",
+  "http://localhost:8050/resources/img/cover/ab02.jpg",
+];
+
 function Home() {
+  const products = useContext(ProductContext);
+
+  const productList = useMemo(
+    () =>
+      products.map((contents, idx) => (
+        <ProgramCard key={idx} contents={contents} idx={idx} />
+      )),
+    [products]
+  );
+
   return (
     <Stack
       component='main'
       sx={{
         gap: 10,
       }}>
-      <Box>
+      <Container>
         {/* Section 01 - slide */}
-        <Box
-          sx={{
-            height: 400,
-          }}>
-          <Box
-            component='img'
-            src='http://localhost:8050/resources/img/cover/ab01.jpg'
-            alt='sample'
-            sx={{
-              objectFit: "cover",
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </Box>
-      </Box>
+        <ImageSlider autoPlay images={imageList} />
+      </Container>
 
       <Stack component={Container} maxWidth={"lg"} sx={{ gap: 10 }}>
         {/* User information */}
@@ -45,9 +48,10 @@ function Home() {
           <SectionTitle title={"Mentees 프로그램"} more={"/mentees/programs"} />
           {/* Program Cards */}
           <Stack sx={{ mt: 3, gap: 5 }}>
-            {dummyProducts.map((contents, idx) => (
-              <ProgramCard key={idx} contents={contents} idx={idx} />
-            ))}
+            {products.length === 0 && (
+              <Alert severity='warning'>등록된 상품이 없습니다.</Alert>
+            )}
+            {productList}
           </Stack>
         </Box>
 

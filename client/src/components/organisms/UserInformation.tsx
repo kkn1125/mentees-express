@@ -1,9 +1,14 @@
 import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider";
 import OptionProgress from "../molecules/OptionProgress";
 import UserInterest from "../molecules/UserInterest";
 
 function UserInformation() {
+  const user = useContext(UserContext);
+
+  if (!user) return null;
+
   return (
     <Stack
       component={Paper}
@@ -17,7 +22,7 @@ function UserInformation() {
           sx={{
             fontWeight: 700,
           }}>
-          user님의 정보
+          {user.id}님의 정보
         </Typography>
         <Button variant='outlined' color='success'>
           Settings

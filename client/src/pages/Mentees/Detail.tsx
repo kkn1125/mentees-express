@@ -9,18 +9,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import React, { memo, useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../apis";
 import UserProfile from "../../components/molecules/UserProfile";
+import { ProductContext } from "../../contexts/ProductProvider";
+import { orElseImage } from "../../utils/tools";
 
 function Detail() {
   const params = useParams<any>();
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
+  const products = useContext(ProductContext);
+  const [product, setProduct] = useState<Product>({});
 
   useEffect(() => {
-    console.debug(params.id);
+    console.debug(params.num);
     window.addEventListener("scroll", handleScroll);
+
+    api.products.findOne(params.num).then((result) => {
+      const { data } = result;
+      const { payload } = data;
+      const prod = payload[0];
+      setProduct(prod);
+    });
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -44,7 +57,7 @@ function Detail() {
         <Box
           ref={imgRef}
           component='img'
-          src='http://localhost:8050/resources/img/cover/sample.jpg'
+          src={orElseImage(product.cover)}
           alt=''
           sx={{
             width: "100%",
@@ -65,31 +78,20 @@ function Detail() {
             sx={{
               fontWeight: 700,
             }}>
-            Title
+            {product.title}
           </Typography>
-          <Chip color='primary' label='Semina' />
+          <Chip color='primary' label={product.type} />
         </Stack>
 
         <Divider sx={{ my: 2 }} />
         <UserProfile
-          nickname='kimson'
+          nickname={product.id}
           src='https://avatars.githubusercontent.com/u/71887242?v=4'
-          time={new Date()}
+          time={new Date(product.regdate)}
         />
 
         <Typography variant='body1' sx={{ my: 5 }}>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Obcaecati,
-          facere! Aspernatur vero adipisci culpa! Quam, perferendis libero
-          quisquam enim non quibusdam dicta totam autem alias. Pariatur eos
-          expedita facilis tenetur in. Obcaecati magnam dicta fugit quia quaerat
-          libero exercitationem deleniti, labore aperiam, quod explicabo beatae
-          nulla vitae accusamus esse natus ullam aliquam, ducimus consequatur
-          iusto. Pariatur, beatae quas atque dolor eaque nisi! Blanditiis nam
-          tenetur sunt aspernatur, facere delectus, fuga inventore voluptates
-          provident quas quisquam assumenda praesentium corrupti deserunt,
-          perspiciatis laborum! Nihil blanditiis voluptates officia esse numquam
-          nulla nisi qui consequatur molestias similique, quae impedit dicta
-          quod sint pariatur voluptatibus.
+          {product.content}
         </Typography>
         <Stack
           direction='row'
@@ -97,10 +99,31 @@ function Detail() {
           alignItems='center'
           sx={{ gap: 2 }}>
           <Stack direction='row' sx={{ gap: 2 }}>
-            <Typography variant='body2'>2022-09-02 16:03</Typography>
+            <Typography variant='body2'>
+              {new Date(product.start).toLocaleString()}
+            </Typography>
             <Typography variant='body2'>~</Typography>
-            <Typography variant='body2'>2022-09-03 16:03</Typography>
+            <Typography variant='body2'>
+              {new Date(product.end).toLocaleString()}
+            </Typography>
           </Stack>
+
+          <Stack direction='row' sx={{ gap: 2 }}>
+            <Typography variant='body2'>마감일</Typography>
+            <Typography variant='body2'>
+              {new Date(product.until).toLocaleString()}
+            </Typography>
+          </Stack>
+        </Stack>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Stack direction='row' justifyContent='space-between' sx={{ gap: 2 }}>
+          <Stack direction='row' sx={{ gap: 2 }}>
+            <Chip label='test' />
+            <Chip label='test' />
+          </Stack>
+
           <Stack direction='row' sx={{ gap: 2 }}>
             <Button color='success' variant='contained'>
               신청
@@ -109,13 +132,6 @@ function Detail() {
               찜하기
             </Button>
           </Stack>
-        </Stack>
-
-        <Divider sx={{ my: 2 }} />
-
-        <Stack direction='row' sx={{ gap: 2 }}>
-          <Chip label='test' />
-          <Chip label='test' />
         </Stack>
 
         <Stack
@@ -155,4 +171,4 @@ function Detail() {
   );
 }
 
-export default Detail;
+export default memo(Detail);

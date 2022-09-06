@@ -1,9 +1,25 @@
 import { Box, Stack, Toolbar } from "@mui/material";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import React, { useContext, useEffect } from "react";
+import React, { memo, useContext, useEffect } from "react";
+import { useCookies } from "react-cookie";
 import { Outlet, useLocation } from "react-router-dom";
+import { api } from "../../apis";
+import {
+  ProductContext,
+  ProductDispatchContext,
+  productsLoad,
+} from "../../contexts/ProductProvider";
 import { SnackContext } from "../../contexts/SnackbarProvider";
+import {
+  UserContext,
+  UserDispatchContext,
+  userSave,
+} from "../../contexts/UserProvider";
+import {
+  REACT_APP_SERVER_HOST,
+  REACT_APP_SERVER_PORT,
+} from "../../utils/tools";
 import StackableSnackbar from "../molecules/StackableSnackbar";
 import Footer from "./Footer";
 import Header from "./Header";
@@ -11,13 +27,35 @@ import Header from "./Header";
 function Layout() {
   const locate = useLocation();
   const snacks = useContext(SnackContext);
+  const users = useContext(UserContext);
+  const userDispatch = useContext(UserDispatchContext);
+  const [cookies, setCookie] = useCookies(["token"]);
+  const productDispatch = useContext(ProductDispatchContext);
 
   useEffect(() => {
     AOS.init();
+    const sse = new EventSource(
+      `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}` +
+        "/sse/broadcast"
+    );
+
+    sse.addEventListener("broadcast", (e) => {
+      const products = JSON.parse(e.data);
+      productDispatch(productsLoad(products));
+    });
   }, []);
 
   useEffect(() => {
+    const { token } = cookies;
     document.body.scrollIntoView(true);
+
+    const checkToken = () => Boolean(token);
+    const checkUser = () => Boolean(users);
+    if (!checkUser() && checkToken()) {
+      api.members.findOne(token.user_num).then((foundUser) => {
+        userDispatch(userSave(foundUser.data.payload[0]));
+      });
+    }
   }, [locate.pathname]);
 
   return (
@@ -35,7 +73,7 @@ function Layout() {
             gap: 1,
             position: "relative",
           }}>
-          {snacks.map(({ id, message, done, color }) => (
+          {snacks.snacks.map(({ id, message, done, color }) => (
             <StackableSnackbar
               key={id}
               id={id}
@@ -64,4 +102,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default memo(Layout);

@@ -1,7 +1,13 @@
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
+import {
+  UserContext,
+  UserDispatchContext,
+  userReset,
+} from "../../contexts/UserProvider";
 import Logo from "../atoms/Logo";
 import ScrollTop from "../atoms/ScrollTop";
 import ResponsiveMenuList from "../molecules/MenuList";
@@ -26,7 +32,10 @@ const pages: MenuItems[] = [
 ];
 
 const Header = () => {
-  const [users, setUsers] = useState([
+  const userDispatch = useContext(UserDispatchContext);
+  const user = useContext(UserContext);
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
+  const [userMenu, setUserMenu] = useState([
     {
       name: "Profile",
       url: "/profile",
@@ -39,19 +48,26 @@ const Header = () => {
     },
     {
       name: "Logout",
-      url: "/auth/logout",
+      // url: "/auth/logout",
       show: true,
+      handler: () => {
+        console.log(1);
+        removeCookie("token", {
+          path: "/",
+        });
+        userDispatch(userReset());
+      },
     },
   ]);
 
   useEffect(() => {
-    setUsers(
-      users.map((u) => ({
+    setUserMenu(
+      userMenu.map((u) => ({
         ...u,
-        show: !u.show,
+        show: !u.show
       }))
     );
-  }, []);
+  }, [user]);
 
   return (
     <AppBar position='fixed' color='inherit'>
@@ -63,7 +79,7 @@ const Header = () => {
           {/* Mobile Menu List */}
           <ResponsiveMenuList
             size='Mobile'
-            menuList={pages.filter((li) => li.show)}
+            menuList={pages.filter((menu) => menu.show)}
           />
 
           {/* Mobile Logo */}
@@ -71,11 +87,11 @@ const Header = () => {
           {/* Desktop Menu List */}
           <ResponsiveMenuList
             size='Desktop'
-            menuList={pages.filter((li) => li.show)}
+            menuList={pages.filter((menu) => menu.show)}
           />
 
           {/* 회원 정보 */}
-          <UserMenuList menuList={users.filter((li) => li.show)} />
+          <UserMenuList menuList={userMenu.filter((menu) => menu.show)} />
         </Toolbar>
       </Container>
 

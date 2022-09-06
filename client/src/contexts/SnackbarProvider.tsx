@@ -1,5 +1,4 @@
-import { AlertColor } from "@mui/material";
-import React, { createContext, useContext, useReducer, useRef } from "react";
+import React, { createContext, useReducer } from "react";
 
 const ADD = "snack/add";
 const UPDATE = "snack/update";
@@ -9,52 +8,22 @@ const initialValues = {
   snacks: [],
 };
 
-interface Snacks {
-  count: number;
-  snacks: Snack[];
-}
-
-interface Snack {
-  id: number;
-  message: string;
-  done: boolean;
-  color: AlertColor;
-}
-
-type ActionType = typeof ADD | typeof UPDATE;
-
-interface Action {
-  id?: number;
-  type?: ActionType;
-  snack?: Snack;
-}
-
-export const snackAdd = (
-  snack: Snack
-): {
-  type: ActionType;
-  snack: Snack;
-} => ({
+export const snackAdd = (snack: Snack): SnackAction => ({
   type: ADD,
   snack,
 });
 
-export const snackUpdate = (
-  id: number
-): {
-  type: ActionType;
-  id: number;
-} => ({
+export const snackUpdate = (id: number): SnackAction => ({
   type: UPDATE,
   id,
 });
 
-const reducer = (state: Snacks, action: Action) => {
+const reducer = (state: Snacks, action: SnackAction) => {
   switch (action.type) {
     case ADD:
-      state.count++;
+      action.snack.id = state.count + 1;
       return {
-        count: state.count,
+        count: action.snack.id,
         snacks: state.snacks.concat(action.snack),
       };
     case UPDATE:
@@ -67,27 +36,23 @@ const reducer = (state: Snacks, action: Action) => {
             }
             return snack;
           })
-          .filter((_) => !_.done || _.id <= action.id),
+          .filter((snack) => snack.done || snack.id <= action.id),
       };
     default:
       break;
   }
 };
 
-export const SnackContext = createContext(initialValues.snacks);
-export const SnackIdxContext = createContext(initialValues.count);
-export const SnackDispatchContext = createContext<React.Dispatch<Action>>(null);
+export const SnackContext = createContext(initialValues);
+export const SnackDispatchContext =
+  createContext<React.Dispatch<SnackAction>>(null);
 
 const SnackbarProvider = ({ children }: { children: React.ReactElement }) => {
   const [snacks, dispatch] = useReducer(reducer, initialValues);
 
   return (
     <SnackDispatchContext.Provider value={dispatch}>
-      <SnackIdxContext.Provider value={snacks.count}>
-        <SnackContext.Provider value={snacks.snacks}>
-          {children}
-        </SnackContext.Provider>
-      </SnackIdxContext.Provider>
+      <SnackContext.Provider value={snacks}>{children}</SnackContext.Provider>
     </SnackDispatchContext.Provider>
   );
 };

@@ -12,6 +12,10 @@ memberRouter.get("/members/:num", (req: any, res: any) => {
   memberService.findOne(req, res);
 });
 
+memberRouter.get("/members/id/:id", (req: any, res: any) => {
+  memberService.findById(req, res);
+});
+
 memberRouter.post("/members", (req: any, res: any) => {
   memberService.create(req, res);
 });

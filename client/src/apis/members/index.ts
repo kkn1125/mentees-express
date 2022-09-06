@@ -3,7 +3,7 @@ import { baseUrl } from "../../utils/tools";
 
 export default {
   findAll: () => {
-    return axios.get(baseUrl + `/api/members`).then((res) => {
+    return axios.get(baseUrl + `/members`).then((res) => {
       if (res.status !== 200) {
         return null;
       }
@@ -11,16 +11,19 @@ export default {
       return res.data;
     });
   },
-  findOne: (id: string) => {
-    return axios.get(baseUrl);
+  findOne: (num: string) => {
+    return axios.get(baseUrl + `/members/${num}`);
   },
-  create: (id: string) => {
-    return axios.post(baseUrl);
+  findById: (id: string) => {
+    return axios.get(baseUrl + `/members/id/${id}`);
   },
-  updateById: (id: string) => {
-    return axios.put(baseUrl);
+  create: (user: User) => {
+    return axios.post(baseUrl + `/members`, user);
   },
-  deleteById: (id: string) => {
-    return axios.delete(baseUrl);
+  updateById: (num: string, user: User) => {
+    return axios.put(baseUrl + `/members/${num}`, user);
+  },
+  deleteById: (num: string) => {
+    return axios.delete(baseUrl + `/members/${num}`);
   },
 };

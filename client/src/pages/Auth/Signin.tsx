@@ -10,53 +10,76 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useContext, useState } from "react";
+import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { api } from "../../apis";
+import { UserDispatchContext, userSave } from "../../contexts/UserProvider";
 import useSnack from "../../hooks/useSnack";
+import ALERT_COMMENT from "../../utils/alertComment";
 import { emailValidation, passwordValidation } from "../../utils/tools";
+
+const { SIGN_IN } = ALERT_COMMENT;
 
 const inputs: Inputs[] = [
   {
+    label: "email",
     name: "email",
     type: "email",
     placeholder: "sample@naver.com",
   },
   {
-    name: "password",
+    label: "password",
+    name: "pw",
     type: "password",
   },
 ];
 
 const validationSchema = yup.object({
   email: emailValidation,
-  password: passwordValidation,
+  pw: passwordValidation,
 });
 
 function Signin() {
+  const userDispatch = useContext(UserDispatchContext);
+  const [cookies, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
   const [cover, setCover] = useState(false);
   const { successSnack, errorSnack } = useSnack();
-
   const formik = useFormik({
     initialValues: {
       email: "",
-      password: "",
+      pw: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       setCover(true);
-      api.auth
-        .signin({ email: values.email, password: values.password })
-        .then((result) => {
-          successSnack("");
-          navigate("/");
-        })
-        .catch((e) => {
-          errorSnack("로그인에 실패하였습니다.");
-          setCover(false);
-        });
+      setTimeout(() => {
+        api.auth
+          .signin(values)
+          .then((result: any) => {
+            const { data } = result;
+            const { payload } = data;
+            successSnack(SIGN_IN.SUCCESS);
+            userDispatch(userSave(payload.user));
+            setCookie(
+              "token",
+              {
+                token: payload.token,
+                user_num: payload.user_num,
+              },
+              {
+                path: "/",
+              }
+            );
+            navigate("/");
+          })
+          .catch((e) => {
+            errorSnack(e.message);
+            setCover(false);
+          });
+      }, 1000);
     },
   });
 
@@ -73,6 +96,7 @@ function Signin() {
           sx={{
             flex: 1,
             overflow: "hidden",
+            height: "100%",
             maxHeight: 556,
             position: "relative",
           }}>
@@ -83,6 +107,7 @@ function Signin() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
+              backgroundColor: "#00000008",
             }}
           />
           {cover && (
@@ -135,7 +160,7 @@ function Signin() {
               float: "right",
             }}>
             <Stack justifyContent='center' sx={{ gap: 1 }}>
-              {inputs.map(({ name, type, placeholder }, idx) => (
+              {inputs.map(({ label, name, type, placeholder }, idx) => (
                 <Box key={idx} sx={{ whiteSpace: "normal" }}>
                   <TextField
                     fullWidth
@@ -145,7 +170,7 @@ function Signin() {
                     required
                     id={name}
                     name={name}
-                    label={name}
+                    label={label}
                     placeholder={placeholder}
                     size={"medium"}
                     autoFocus
@@ -160,6 +185,14 @@ function Signin() {
             </Stack>
             <Button variant='contained' type='submit' disabled={cover}>
               로그인
+            </Button>
+            <Button
+              component={Link}
+              to='/'
+              color='secondary'
+              variant='contained'
+              type='button'>
+              메인으로
             </Button>
             <Link to='/auth/signup'>go to Sign up</Link>
           </Stack>

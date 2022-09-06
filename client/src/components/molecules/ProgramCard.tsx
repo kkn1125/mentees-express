@@ -1,6 +1,7 @@
 import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
+import { orElseImage } from "../../utils/tools";
 import LikeIcon from "../atoms/LikeIcon";
 import TextOverflow from "../atoms/TextOverflow";
 import ViewIcon from "../atoms/ViewIcon";
@@ -47,7 +48,7 @@ function ProgramCard({ contents, idx }: ProgramCard) {
         }}>
         <Box
           component='img'
-          src={cover}
+          src={orElseImage(cover)}
           alt='sample'
           sx={{
             objectFit: "cover",

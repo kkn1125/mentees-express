@@ -7,6 +7,9 @@ import theme from "./theme";
 import { BrowserRouter } from "react-router-dom";
 import { GlobalStyles } from "@mui/material";
 import SnackbarProvider from "./contexts/SnackbarProvider";
+import UserProvider from "./contexts/UserProvider";
+import ProductProvider from "./contexts/ProductProvider";
+import CommentProvider from "./contexts/CommentProvider";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement!);
@@ -28,10 +31,16 @@ root.render(
     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
     <CssBaseline />
     <GlobalStyles styles={globalStyles} />
-    <SnackbarProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </SnackbarProvider>
+    <CommentProvider>
+      <ProductProvider>
+        <UserProvider>
+          <SnackbarProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </SnackbarProvider>
+        </UserProvider>
+      </ProductProvider>
+    </CommentProvider>
   </ThemeProvider>
 );

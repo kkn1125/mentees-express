@@ -13,4 +13,10 @@ module.exports = function (app) {
       target: `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}}`,
     })
   );
+  app.use(
+    createProxyMiddleware("/sse", {
+      changeOrigin: true,
+      target: `http://${REACT_APP_SERVER_HOST}:${REACT_APP_SERVER_PORT}}`,
+    })
+  );
 };

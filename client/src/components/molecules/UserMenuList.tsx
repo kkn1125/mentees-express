@@ -7,11 +7,13 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../contexts/UserProvider";
 
 function UserMenuList({ menuList }: { menuList: MenuItems[] }) {
   const navigate = useNavigate();
+  const user = useContext(UserContext);
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -19,16 +21,15 @@ function UserMenuList({ menuList }: { menuList: MenuItems[] }) {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseUserMenu = (url: string) => {
+  const handleCloseUserMenu = () => {
     setAnchorElUser(null);
-    navigate(url);
   };
 
   return (
     <Box sx={{ flexGrow: 0 }}>
-      <Tooltip title='Open settings'>
+      <Tooltip title='사용자 메뉴'>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+          <Avatar alt={user?.id} {...(user && { src: user?.cover })} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -49,9 +50,11 @@ function UserMenuList({ menuList }: { menuList: MenuItems[] }) {
         {menuList.map(({ name, url, handler }) => (
           <MenuItem
             key={name}
-            onClick={() =>
-              url ? handleCloseUserMenu(url) : (handler as () => void)()
-            }>
+            onClick={() => {
+              handleCloseUserMenu();
+              url && navigate(url);
+              handler && handler();
+            }}>
             <Typography textAlign='center'>{name}</Typography>
           </MenuItem>
         ))}

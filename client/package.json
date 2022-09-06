@@ -15,7 +15,7 @@
     "formik": "^2.2.9",
     "http-proxy-middleware": "^2.0.6",
     "react": "latest",
-    "react-cookies": "^0.1.1",
+    "react-cookie": "^4.1.1",
     "react-dom": "latest",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^6.3.0",
@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@types/aos": "^3.0.4",
-    "@types/react-cookies": "^0.1.0",
     "@types/react-helmet": "^6.1.5",
     "@types/react-router-dom": "^5.3.3"
   }

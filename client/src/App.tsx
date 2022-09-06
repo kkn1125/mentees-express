@@ -20,8 +20,8 @@ export default function App() {
         <Route path='mentees'>
           <Route index element={<Programs />} />
           <Route path='feedback' element={<Feedback />} />
-          <Route path='feedback/:id' element={<FeedbackDetail />} />
-          <Route path=':id' element={<Detail />} />
+          <Route path='feedback/:num' element={<FeedbackDetail />} />
+          <Route path=':num' element={<Detail />} />
         </Route>
         <Route path='auth'>
           <Route path='signin' element={<Signin />} />

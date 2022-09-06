@@ -7,5 +7,9 @@ const authRouter = router.Router();
 authRouter.post("/auth/signin", (req: any, res: any) => {
   memberService.signin(req, res);
 });
+// auth
+authRouter.post("/auth/signout", (req: any, res: any) => {
+  memberService.signout(req, res);
+});
 
 export default authRouter;
