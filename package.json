@@ -4,12 +4,14 @@
   "description": "",
   "type": "module",
   "scripts": {
-    "build": "cd server/ && yarn build && cp .env build/ && cd ../ && cd client/ && yarn build",
-    "server": "cd server && yarn start",
-    "client": "cd client && yarn start",
-    "start": "concurrently --kill-others \"yarn server\" \" yarn client\"",
-    "mock": "cd ./server/ && set NODE_ENV=production && node build/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:server": "cd server/ && yarn build",
+    "build:client": "cd client/ && yarn build",
+    "build": "concurrently --kill-others-on-fail \"yarn build:server\" \"yarn build:client\"",
+    "start:server": "cd server/ && yarn start",
+    "start:client": "cd client/ && yarn start",
+    "start": "concurrently --kill-others-on-fail \"yarn start:server\" \"yarn start:client\"",
+    "clean": "rm -rf server/build/",
+    "mock": "cd ./server/ && set NODE_ENV=production && node build/index.js"
   },
   "repository": {
     "type": "git",

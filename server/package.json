@@ -2,7 +2,7 @@
   "name": "mentees_server",
   "version": "5.0.0",
   "private": true,
-  "main": "dist/index.js",
+  "main": "build/index.js",
   "type": "module",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",

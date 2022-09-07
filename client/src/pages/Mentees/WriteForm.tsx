@@ -10,7 +10,7 @@ function WriteForm({ mode }: WriteFormprops) {
   return (
     <Container maxWidth={"lg"}>
       <Toolbar />
-			{mode}
+      {mode}
     </Container>
   );
 }
