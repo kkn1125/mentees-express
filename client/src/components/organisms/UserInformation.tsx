@@ -1,13 +1,14 @@
 import { Button, Divider, Paper, Stack, Typography } from "@mui/material";
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import { UserContext } from "../../contexts/UserProvider";
 import OptionProgress from "../molecules/OptionProgress";
 import UserInterest from "../molecules/UserInterest";
 
 function UserInformation() {
-  const user = useContext(UserContext);
+  const users = useContext(UserContext);
 
-  if (!user.id) return null;
+  if (!users.id) return null;
 
   return (
     <Stack
@@ -22,10 +23,14 @@ function UserInformation() {
           sx={{
             fontWeight: 700,
           }}>
-          {user.id}님의 정보
+          {users.id}님의 정보
         </Typography>
-        <Button variant='outlined' color='success'>
-          Settings
+        <Button
+          component={Link}
+          to='/mentees/profile'
+          variant='outlined'
+          color='success'>
+          profile
         </Button>
       </Stack>
 

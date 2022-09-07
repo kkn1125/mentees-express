@@ -9,7 +9,7 @@ import {
 const token = (code: string) => {
   return axios.post(`${baseUrl}${tokenEndpoint}`, {
     redirect_uri:
-      process.env.NODE_ENV === "production" ? serverBaseUrl : clientBaseUrl,
+      process.env.NODE_ENV !== "production" ? clientBaseUrl : serverBaseUrl,
     code,
   });
 };

@@ -13,7 +13,7 @@ Member.signin = (req, res) => {
     "SELECT * FROM member WHERE email=?",
     req.body.email,
     (err, rows) => {
-      bcrypt.compare(req.body.pw, rows[0].pw, (err, same) => {
+      bcrypt.compare(req.body.pw, rows[0].pw, (error, same) => {
         try {
           if (err) {
             res.status(404).json({
@@ -30,7 +30,7 @@ Member.signin = (req, res) => {
                 token,
                 refreshToken,
                 user_num: user.num,
-                user: user,
+                user,
               },
             });
           } else {

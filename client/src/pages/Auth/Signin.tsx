@@ -24,6 +24,7 @@ import {
   clientBaseUrl,
   emailValidation,
   passwordValidation,
+  serverBaseUrl,
 } from "../../utils/tools";
 
 const { SIGN_IN } = ALERT_COMMENT;
@@ -92,7 +93,9 @@ function Signin() {
   });
 
   const kakaoLogin = () => {
-    location.href = `${authorizeUrl}?redirect_uri=${clientBaseUrl}`;
+    location.href = `${authorizeUrl}?redirect_uri=${
+      process.env.NODE_ENV !== "production" ? clientBaseUrl : serverBaseUrl
+    }`;
   };
 
   return (

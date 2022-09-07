@@ -70,7 +70,7 @@ const me = async (
       payload: data,
     });
   } catch (e: any) {
-    console.log(e);
+    console.debug(e);
     res.status(e.status).json({
       ok: false,
       message: e.status === 401 ? "잘못된 요청입니다." : e.message,
@@ -89,14 +89,14 @@ const logout = (
     )
     .then((result) => {
       const { data } = result;
-      console.log(data);
+      console.debug(data);
       res.status(200).json({
         ok: true,
         message: "카카오 계정이 정상 로그아웃 되었습니다.",
       });
     })
     .catch((e) => {
-      console.log(e);
+      console.debug(e);
       res.status(500).json({
         ok: false,
         message: "서버에 오류가 발생했습니다.",

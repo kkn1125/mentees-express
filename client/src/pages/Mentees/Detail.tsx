@@ -9,9 +9,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { memo, useContext, useEffect, useRef, useState } from "react";
+import React, { memo, useContext, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { api } from "../../apis";
 import UserProfile from "../../components/molecules/UserProfile";
 import { ProductContext } from "../../contexts/ProductProvider";
 import { orElseImage } from "../../utils/tools";
@@ -21,23 +20,19 @@ function Detail() {
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
   const products = useContext(ProductContext);
-  const [product, setProduct] = useState<Product>({});
 
   useEffect(() => {
-    console.debug(params.num);
     window.addEventListener("scroll", handleScroll);
-
-    api.products.findOne(params.num).then((result) => {
-      const { data } = result;
-      const { payload } = data;
-      const prod = payload[0];
-      setProduct(prod);
-    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const product = useMemo(
+    () => products.find((prod) => prod.num === Number(params.num)) || {},
+    [products]
+  );
 
   const handleScroll = (e: Event) => {
     const heightGap = document.body.scrollHeight - window.innerHeight;

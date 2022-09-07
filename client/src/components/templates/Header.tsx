@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,7 +11,7 @@ import {
   userReset,
 } from "../../contexts/UserProvider";
 import useSnack from "../../hooks/useSnack";
-import { clientBaseUrl } from "../../utils/tools";
+import { clientBaseUrl, serverBaseUrl } from "../../utils/tools";
 import Logo from "../atoms/Logo";
 import ScrollTop from "../atoms/ScrollTop";
 import ResponsiveMenuList from "../molecules/MenuList";
@@ -37,7 +38,7 @@ const pages: MenuItems[] = [
 const Header = () => {
   const { successSnack, errorSnack } = useSnack();
   const userDispatch = useContext(UserDispatchContext);
-  const user = useContext(UserContext);
+  const users = useContext(UserContext);
   const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const userMenu = [
@@ -58,7 +59,11 @@ const Header = () => {
         if (cookies.token.access_token) {
           // kakao logout
           api.kakao
-            .logout(clientBaseUrl)
+            .logout(
+              process.env.NODE_ENV !== "production"
+                ? clientBaseUrl
+                : serverBaseUrl
+            )
             .then((result) => {
               const { data } = result;
               if (data.ok) {
@@ -86,8 +91,8 @@ const Header = () => {
   ];
 
   useEffect(() => {
-    setIsLoggedIn(Boolean(user) && Boolean(cookies.token));
-  }, [user, cookies.token]);
+    setIsLoggedIn(Boolean(users) && Boolean(cookies.token));
+  }, [users, cookies.token]);
 
   return (
     <AppBar position='fixed' color='inherit'>
@@ -110,6 +115,14 @@ const Header = () => {
             menuList={pages.filter((menu) => menu.show)}
           />
 
+          {users.id && (
+            <Typography component='div' sx={{ mr: 2 }}>
+              <Typography component='span' sx={{ fontWeight: 700 }}>
+                {users.id}
+              </Typography>
+              님
+            </Typography>
+          )}
           {/* 회원 정보 */}
           <UserMenuList menuList={userMenu.filter((menu) => menu.show)} />
         </Toolbar>

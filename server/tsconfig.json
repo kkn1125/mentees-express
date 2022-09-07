@@ -1,4 +1,5 @@
 {
+  // https://stackoverflow.com/questions/45661027/typescript-outdir-setting-in-tsconfig-json-not-working 프로젝트 살림 빌드 안되는 문제
   "compilerOptions": {
     "target": "ES2021",
     "lib": ["dom", "dom.iterable", "esnext", "ES6"],
@@ -12,16 +13,18 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     // "isolatedModules": false,
-    "noEmit": true,
+    "noEmit": false,
     "noImplicitAny": false,
     "jsx": "react",
     "strictNullChecks": false,
     "sourceMap": false,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "outDir": "./build",
+    "baseUrl": "."
   },
   "ts-node": {
     "esm": true
   },
-  "include": ["src"],
-  "exclude": []
+  "include": ["./", "src/**/*"],
+  "exclude": ["build", "node_modules", "front"]
 }
