@@ -9,17 +9,26 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { orElseImage } from "../../utils/tools";
 
-function MenteeCard() {
+interface MenteeCardProps {
+  user: User;
+}
+
+function MenteeCard({ user }: MenteeCardProps) {
   return (
     <Stack
       direction={{ xs: "column", md: "row" }}
       component={Paper}
       elevation={5}
       data-aos='fade-left'>
-      <Stack direction='row' justifyContent='center' sx={{ p: 2 }}>
+      <Stack
+        direction='row'
+        justifyContent='center'
+        alignItems='center'
+        sx={{ p: 2 }}>
         <Avatar
-          src='http://localhost:8050/resources/img/cover/sample.jpg'
+          src={orElseImage(user.cover)}
           alt='sample'
           sx={{
             width: 150,
@@ -31,10 +40,11 @@ function MenteeCard() {
         sx={{
           p: 3,
           gap: 2,
+          flex: 1,
         }}>
         <Stack direction='row' justifyContent='space-between'>
           <Typography variant='h6' color='primary' sx={{ fontWeight: 700 }}>
-            chaplet01@gmail.com
+            {user.email}
           </Typography>
           <Chip color='primary' label={1} />
         </Stack>
@@ -47,10 +57,7 @@ function MenteeCard() {
           </Typography>
           <Divider sx={{ my: 1 }} />
           <Typography variant='body2'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos eaque
-            voluptatem rerum qui soluta tenetur aliquid odio fugiat accusamus,
-            modi numquam commodi quibusdam reprehenderit, eligendi sapiente quam
-            ipsa aliquam hic.
+            {user.msg || "등록된 메세지가 없습니다 😮"}
           </Typography>
         </Box>
 

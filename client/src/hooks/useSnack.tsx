@@ -1,5 +1,4 @@
-import { AlertColor } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import { useContext } from "react";
 import {
   snackAdd,
   SnackContext,

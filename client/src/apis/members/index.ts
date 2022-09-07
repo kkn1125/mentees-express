@@ -3,13 +3,7 @@ import { baseUrl } from "../../utils/tools";
 
 export default {
   findAll: () => {
-    return axios.get(baseUrl + `/members`).then((res) => {
-      if (res.status !== 200) {
-        return null;
-      }
-      console.debug(res);
-      return res.data;
-    });
+    return axios.get(baseUrl + `/members`);
   },
   findOne: (num: string) => {
     return axios.get(baseUrl + `/members/${num}`);

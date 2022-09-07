@@ -4,6 +4,7 @@ import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../apis";
 import {
   UserContext,
@@ -36,6 +37,7 @@ const pages: MenuItems[] = [
 ];
 
 const Header = () => {
+  const navigate = useNavigate();
   const { successSnack, errorSnack } = useSnack();
   const userDispatch = useContext(UserDispatchContext);
   const users = useContext(UserContext);
@@ -72,6 +74,7 @@ const Header = () => {
                   path: "/",
                 });
                 userDispatch(userReset());
+                navigate("/");
               } else {
                 throw new Error("카카오 로그아웃에 실패했습니다.");
               }
@@ -85,6 +88,7 @@ const Header = () => {
             path: "/",
           });
           userDispatch(userReset());
+          navigate("/");
         }
       },
     },

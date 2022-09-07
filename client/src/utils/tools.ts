@@ -92,7 +92,7 @@ export const passwordValidation = yup
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/g,
     "비밀번호는 숫자 + 소문자 + 대문자 + 특수문자로 구성되어야 합니다. (대문자 및 특수문자는 최소 1자 이상 포함되어야 합니다."
   )
-  .required("이메일은 필수 항목 입니다.");
+  .required("비밀번호는 필수 항목 입니다.");
 
 export const objectToQueryString = (obj: object): string =>
   Object.entries(obj).reduce(

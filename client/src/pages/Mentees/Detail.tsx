@@ -22,6 +22,9 @@ function Detail() {
   const products = useContext(ProductContext);
 
   useEffect(() => {
+    if (isNaN(Number(params.num))) {
+      navigate(-1);
+    }
     window.addEventListener("scroll", handleScroll);
 
     return () => {

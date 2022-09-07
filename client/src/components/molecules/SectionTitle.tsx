@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 interface SectionTitleProps {
   title: string;
   more?: string;
+  tooltip?: string;
 }
 
-function SectionTitle({ title, more }: SectionTitleProps) {
+function SectionTitle({ title, more, tooltip }: SectionTitleProps) {
   return (
     <Stack direction='row' alignItems='center' justifyContent='space-between'>
       <Stack
@@ -24,16 +25,21 @@ function SectionTitle({ title, more }: SectionTitleProps) {
           }}>
           {title}
         </Typography>
-        <Tooltip title='test'>
-          <Button
-            color='primary'
-            variant='contained'
-            sx={{
-              minWidth: 35,
-            }}>
-            ?
-          </Button>
-        </Tooltip>
+        {tooltip && (
+          <Tooltip title={tooltip} placement='right'>
+            <Button
+              variant='contained'
+              sx={{
+                minWidth: 35,
+                backgroundColor: (theme) => theme.palette.text.primary,
+                [`&:hover`]: {
+                  backgroundColor: (theme) => theme.palette.text.secondary,
+                },
+              }}>
+              ?
+            </Button>
+          </Tooltip>
+        )}
       </Stack>
       {more && (
         <Box>

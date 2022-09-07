@@ -12,18 +12,20 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
+    // "declaration": true,
     // "isolatedModules": false,
     "noEmit": false,
+    // module을 esnext로 설정 하면 noemit이 true일 때 ts build가 되지 않음
     "noImplicitAny": false,
-    "jsx": "react",
+    // "jsx": "react",
     "strictNullChecks": false,
     "sourceMap": false,
     "noEmitOnError": true,
     "outDir": "./build",
-    "baseUrl": "."
   },
   "ts-node": {
-    "esm": true
+    "esm": true,
+    "files": true
   },
   "include": ["./", "src/**/*"],
   "exclude": ["build", "node_modules", "front"]

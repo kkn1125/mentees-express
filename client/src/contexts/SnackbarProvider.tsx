@@ -36,7 +36,7 @@ const reducer = (state: Snacks, action: SnackAction) => {
             }
             return snack;
           })
-          .filter((snack) => snack.done || snack.id <= action.id),
+          .filter((snack) => snack.done || snack.id < action.id),
       };
     default:
       break;

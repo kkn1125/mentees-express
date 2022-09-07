@@ -12,12 +12,11 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CopyButton from "../../components/atoms/CopyButton";
 import UserProfile from "../../components/molecules/UserProfile";
 
 function FeedbackDetail() {
-  const params = useParams<any>();
   const navigate = useNavigate();
 
   return (

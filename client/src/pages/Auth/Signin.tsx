@@ -85,7 +85,7 @@ function Signin() {
             navigate("/");
           })
           .catch((e) => {
-            errorSnack(e.message);
+            errorSnack(e.response.data.message);
             setCover(false);
           });
       }, 1000);

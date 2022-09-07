@@ -19,7 +19,7 @@ const reducer = (state: User, action: UserAction) => {
     case SAVE:
       return action.user;
     case RESET:
-      return null;
+      return {};
     default:
       break;
   }
