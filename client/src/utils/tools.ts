@@ -1,5 +1,4 @@
 import * as yup from "yup";
-import { AnyObject } from "yup/lib/object";
 
 export const {
   REACT_APP_SERVER_HOST,
@@ -29,7 +28,7 @@ export const BRAND_NAME = "mentees";
 export const dummyProducts = [
   {
     num: 1,
-    cover: "http://localhost:8050/resources/img/cover/sample.jpg",
+    cover: `/assets/sample.jpg`,
     title: "mentees programs",
     view: 5,
     type: "semina",
@@ -40,7 +39,7 @@ export const dummyProducts = [
   },
   {
     num: 2,
-    cover: "http://localhost:8050/resources/img/cover/sample.jpg",
+    cover: `/assets/sample.jpg`,
     title: "mentees programs2",
     view: 5,
     type: "semina",
@@ -51,7 +50,7 @@ export const dummyProducts = [
   },
   {
     num: 3,
-    cover: "http://localhost:8050/resources/img/cover/sample.jpg",
+    cover: `/assets/sample.jpg`,
     title: "mentees programs2",
     view: 5,
     type: "semina",
@@ -76,8 +75,15 @@ export const dummyFeedbacks = [
   },
 ];
 
-export const orElseImage = (src: string) =>
-  !src || src.trim() === "" ? "/assets/sample.jpg" : src;
+export const orElseImage = (src: string) => {
+  if (src && src.startsWith("http")) return src;
+
+  return !src || src.trim() === "" || src.startsWith("/assets")
+    ? "/assets/sample.jpg"
+    : `${
+        process.env.NODE_ENV === "production" ? "/resources" : ""
+      }/uploads/${src}`;
+};
 
 export const emailValidation = yup
   .string()
@@ -111,3 +117,24 @@ export const queryStringToObject = (query: string) =>
       .split("&")
       .map((q) => q.split("="))
   );
+
+export const fileToBase64Data = (files) => {
+  const reader = new FileReader();
+  let result = null;
+  reader.readAsDataURL(files);
+  reader.onload = function () {
+    result = reader.result;
+  };
+  reader.onerror = function (err) {
+    console.log("Error: ", err);
+  };
+  return result;
+};
+
+export const getFormData = (data: any): FormData => {
+  const formData = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    formData.append(key, value as string);
+  });
+  return formData;
+};

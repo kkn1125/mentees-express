@@ -10,6 +10,7 @@ import {
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserProvider";
+import { orElseImage } from "../../utils/tools";
 
 function UserMenuList({ menuList }: { menuList: MenuItems[] }) {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ function UserMenuList({ menuList }: { menuList: MenuItems[] }) {
     <Box sx={{ flexGrow: 0 }}>
       <Tooltip title='사용자 메뉴'>
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt={users.id} src={users.cover} />
+          <Avatar alt={users.id} src={orElseImage(users.cover)} />
         </IconButton>
       </Tooltip>
       <Menu

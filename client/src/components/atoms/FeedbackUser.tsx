@@ -1,11 +1,12 @@
 import { Avatar, ListItemText } from "@mui/material";
 import React, { Fragment } from "react";
+import { orElseImage } from "../../utils/tools";
 
-function FeedbackUser() {
+function FeedbackUser({ cover }: { cover: string }) {
   return (
     <Fragment>
       <Avatar
-        src='http://localhost:8050/resources/img/cover/sample.jpg'
+        src={orElseImage(cover)}
         alt='sample'
         sx={{
           width: 25,

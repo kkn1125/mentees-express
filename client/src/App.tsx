@@ -37,14 +37,14 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     if (params.num !== undefined && isNaN(Number(params.num))) {
       setError(true);
-    } else if (!users.num || !hasToken) {
+    } else if (!hasToken) {
       setProtect(true);
       warningSnack("로그인을 해야 접근 가능합니다.");
     }
   }, [users.num]);
 
   if (protect) {
-    return <Navigate to='/' replace />;
+    return <Navigate to={"../"} replace />;
   } else if (error) {
     return <NotFound />;
   }

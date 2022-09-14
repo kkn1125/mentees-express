@@ -1,6 +1,6 @@
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import {
   Avatar,
-  Box,
   Button,
   Container,
   Divider,
@@ -10,7 +10,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import React from "react";
 
 const imgSize = 200;
@@ -52,7 +51,7 @@ function About() {
           alignItems='center'
           sx={{ gap: 3 }}>
           <Avatar
-            src='http://localhost:8050/resources/img/about01.png'
+            src={"/assets/about01.png"}
             alt=''
             sx={{
               width: imgSize,
@@ -67,7 +66,7 @@ function About() {
             <KeyboardDoubleArrowRightIcon />
           </SvgIcon>
           <Avatar
-            src='http://localhost:8050/resources/img/about02.jpg'
+            src={"/assets/about02.jpg"}
             alt=''
             sx={{
               width: imgSize,

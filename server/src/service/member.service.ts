@@ -4,6 +4,7 @@ import Member from "../models/member.js";
 import sql from "../db/mysqlDatabase.js";
 import jwtUtil from "../utils/jwt-util.js";
 import { CustomException } from "../utils/customException.js";
+
 const saltRounds = 10;
 
 Member.signin = (req, res) => {
@@ -16,7 +17,8 @@ Member.signin = (req, res) => {
       try {
         if (rows.length === 0) {
           throw new CustomException({
-            message: "일치하는 회원 정보가 없습니다. 로그인을 다시 시도 해주세요.",
+            message:
+              "일치하는 회원 정보가 없습니다. 로그인을 다시 시도 해주세요.",
             status: 404,
             ok: false,
           });
@@ -62,6 +64,32 @@ Member.signin = (req, res) => {
           ok: e.ok,
           message: e.message,
         });
+      }
+    }
+  );
+};
+
+Member.fileUpload = (req, res) => {
+  const { num } = req.body;
+  const cover = req.files[0];
+
+  sql.query(
+    "UPDATE member SET cover=? WHERE num=?",
+    [cover.filename, num],
+    (error: any, rows: any) => {
+      try {
+        if (error) {
+          res.status(500).json({
+            ok: false,
+            message: error.message || "Not found members",
+          });
+        }
+        res.status(201).json({
+          ok: true,
+          payload: rows,
+        } as APIResponse);
+      } catch (e: any) {
+        /** */
       }
     }
   );
@@ -158,7 +186,9 @@ Member.findById = (req, res) => {
 };
 
 Member.create = (req, res) => {
+  console.log(req.body);
   const { pw } = req.body;
+
   bcrypt.hash(pw, saltRounds, (err, hash) => {
     req.body.pw = hash;
 

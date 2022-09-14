@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl } from "../../utils/tools";
+import { baseUrl, getFormData } from "../../utils/tools";
 
 export default {
   findAll: () => {
@@ -12,10 +12,20 @@ export default {
     return axios.get(baseUrl + `/members/id/${id}`);
   },
   create: (user: User) => {
-    return axios.post(baseUrl + `/members`, user);
+    const formData = getFormData(user);
+    return axios.post(baseUrl + `/members`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
-  updateById: (num: string, user: User) => {
-    return axios.put(baseUrl + `/members/${num}`, user);
+  updateById: (num: string, user: User, token: string) => {
+    const formData = getFormData(user);
+    return axios.put(baseUrl + `/members/${num}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   },
   deleteById: (num: string) => {
     return axios.delete(baseUrl + `/members/${num}`);

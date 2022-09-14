@@ -2,6 +2,12 @@
   "name": "mentees_client",
   "version": "5.0.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
@@ -23,11 +29,11 @@
     "typescript": "latest",
     "yup": "^0.32.11"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "devDependencies": {
+    "@types/aos": "^3.0.4",
+    "@types/react-helmet": "^6.1.5",
+    "@types/react-router-dom": "^5.3.3",
+    "@types/yup": "^0.32.0"
   },
   "browserslist": {
     "production": [
@@ -40,10 +46,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/aos": "^3.0.4",
-    "@types/react-helmet": "^6.1.5",
-    "@types/react-router-dom": "^5.3.3"
   }
 }

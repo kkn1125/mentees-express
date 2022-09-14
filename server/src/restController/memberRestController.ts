@@ -20,6 +20,10 @@ memberRouter.post("/members", (req, res) => {
   memberService.create(req, res);
 });
 
+memberRouter.post("/fileupload", (req, res) => {
+  memberService.fileUpload(req, res);
+});
+
 memberRouter.put("/members/:num", authJWT, (req, res) => {
   memberService.update(req, res);
 });

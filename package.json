@@ -11,7 +11,7 @@
     "start:client": "cd client/ && yarn start",
     "start": "concurrently --kill-others-on-fail \"yarn start:server\" \"yarn start:client\"",
     "clean": "rm -rf server/build/",
-    "mock": "cd ./server/ && set NODE_ENV=production && node build/index.js"
+    "mock": "cd ./server && set NODE_ENV=production && node ./build/index.js"
   },
   "repository": {
     "type": "git",

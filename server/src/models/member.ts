@@ -1,4 +1,5 @@
 class Member {
+  static fileUpload: (req: any, res: any) => void;
   static findAll: (req: any, res: any) => void;
   static findOne: (req: any, res: any) => void;
   static findById: (req: any, res: any) => void;

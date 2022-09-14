@@ -1,6 +1,5 @@
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import {
-  Box,
   Chip,
   Divider,
   List,
@@ -104,7 +103,7 @@ const WideCard = ({ contents, idx }) => {
 };
 
 const ShortCard = ({ contents, idx }) => {
-  const { num, view, title, content, author, tags, regdate, updates } =
+  const { num, view, title, content, cover, author, tags, regdate, updates } =
     contents;
 
   return (
@@ -166,7 +165,7 @@ const ShortCard = ({ contents, idx }) => {
           gap: 1,
         }}>
         <Stack direction='row' alignItems='center' sx={{ gap: 1 }}>
-          <FeedbackUser />
+          <FeedbackUser cover={cover} />
         </Stack>
         <CopyButton url={location.href} />
       </ListItem>
