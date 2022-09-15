@@ -9,11 +9,30 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import parse, {
+  DOMNode,
+  Element,
+  HTMLReactParserOptions,
+} from "html-react-parser";
 import React, { memo, useContext, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import LikeIcon from "../../components/atoms/LikeIcon";
+import ViewIcon from "../../components/atoms/ViewIcon";
 import UserProfile from "../../components/molecules/UserProfile";
 import { ProductContext } from "../../contexts/ProductProvider";
-import { orElseImage } from "../../utils/tools";
+import { dateFormat, orElseImage } from "../../utils/tools";
+
+const options: HTMLReactParserOptions = {
+  replace: (domNode: DOMNode) => {
+    if (
+      domNode instanceof Element &&
+      domNode.attribs &&
+      domNode.attribs.class === "remove"
+    ) {
+      return <></>;
+    }
+  },
+};
 
 function Detail() {
   const params = useParams<any>();
@@ -32,7 +51,7 @@ function Detail() {
     };
   }, []);
 
-  const product = useMemo(
+  const product = useMemo<Product>(
     () => products.find((prod) => prod.num === Number(params.num)) || {},
     [products]
   );
@@ -65,7 +84,7 @@ function Detail() {
           }}
         />
       </Box>
-      <Container sx={{ pt: 10 }}>
+      <Container maxWidth='md' sx={{ pt: 10 }}>
         <Stack
           direction='row'
           justifyContent='space-between'
@@ -78,7 +97,13 @@ function Detail() {
             }}>
             {product.title}
           </Typography>
-          <Chip color='primary' label={product.type} />
+          <Stack direction='row' sx={{ gap: 3 }}>
+            <Stack direction='row' sx={{ gap: 1 }}>
+              <LikeIcon pnum={product.num} />
+              <ViewIcon count={product.view} />
+            </Stack>
+            <Chip color='primary' label={product.type} />
+          </Stack>
         </Stack>
 
         <Divider sx={{ my: 2 }} />
@@ -88,8 +113,8 @@ function Detail() {
           time={new Date(product.regdate)}
         />
 
-        <Typography variant='body1' sx={{ my: 5 }}>
-          {product.content}
+        <Typography component='div' variant='body1' sx={{ my: 5 }}>
+          {parse(product.content || "", options)}
         </Typography>
         <Stack
           direction='row'
@@ -98,18 +123,18 @@ function Detail() {
           sx={{ gap: 2 }}>
           <Stack direction='row' sx={{ gap: 2 }}>
             <Typography variant='body2'>
-              {new Date(product.start).toLocaleString()}
+              {dateFormat(new Date(product.start), "yyyy. MM. dd.")}
             </Typography>
             <Typography variant='body2'>~</Typography>
             <Typography variant='body2'>
-              {new Date(product.end).toLocaleString()}
+              {dateFormat(new Date(product.end), "yyyy. MM. dd.")}
             </Typography>
           </Stack>
 
           <Stack direction='row' sx={{ gap: 2 }}>
             <Typography variant='body2'>마감일</Typography>
             <Typography variant='body2'>
-              {new Date(product.until).toLocaleString()}
+              {dateFormat(new Date(product.until), "yyyy. MM. dd.")}
             </Typography>
           </Stack>
         </Stack>
@@ -118,8 +143,9 @@ function Detail() {
 
         <Stack direction='row' justifyContent='space-between' sx={{ gap: 2 }}>
           <Stack direction='row' sx={{ gap: 2 }}>
-            <Chip label='test' />
-            <Chip label='test' />
+            {product.tags.split("_").map((tag, idx) => (
+              <Chip key={tag + idx} label={tag} />
+            ))}
           </Stack>
 
           <Stack direction='row' sx={{ gap: 2 }}>

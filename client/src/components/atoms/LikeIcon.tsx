@@ -1,21 +1,41 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { IconButton, Stack, SvgIcon, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { api } from "../../apis";
+import { ProductContext } from "../../contexts/ProductProvider";
+import { UserContext } from "../../contexts/UserProvider";
 
-function LikeIcon() {
+interface LikeIconProps {
+  pnum?: number;
+  type: "likes" | "feed";
+}
+
+function LikeIcon({ pnum, type }: LikeIconProps) {
   const [count, setCount] = useState<number>(0);
   const [own, setOwn] = useState<boolean>(false);
+  const users = useContext(UserContext);
+  const products = useContext(ProductContext);
 
   useEffect(() => {
     // api 사용해야 함
-    setCount(5);
-  }, []);
+    if (pnum) {
+      api[type].findByPid(pnum).then((result) => {
+        const { data } = result;
+        const { payload } = data;
+        // console.log(data);
+        setCount(payload ? payload.length : 0);
+        setOwn(Boolean(payload.find((like) => like.mnum === users.num)));
+      });
+    }
+  }, [products]);
 
   const handleCount = () => {
     if (!own) {
       setCount(count + 1);
+      api.likes.create(pnum, users.num);
     } else {
       setCount(count - 1);
+      api.likes.delete(pnum, users.num);
     }
     setOwn(!own);
   };
@@ -31,5 +51,9 @@ function LikeIcon() {
     </Stack>
   );
 }
+
+LikeIcon.defaultProps = {
+  type: "likes",
+};
 
 export default LikeIcon;

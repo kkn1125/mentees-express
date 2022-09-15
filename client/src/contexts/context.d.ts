@@ -71,6 +71,20 @@ declare interface Product {
 /**
  * products types
  */
+declare interface Feedback {
+  num?: number | null;
+  tags?: string | null;
+  view?: number | null;
+  author?: string | null;
+  title?: string | null;
+  content?: string | null;
+  regdate?: string | null; // date 변환 필요
+  updates?: string | null; // date 변환 필요
+}
+
+/**
+ * products types
+ */
 declare interface Comments {
   num?: number | null;
   pnum?: number | null;
@@ -85,6 +99,7 @@ declare interface Comments {
 
 declare type UserActionType = "user/save" | "user/reset";
 declare type ProductActionType = "product/load";
+declare type FeedbackActionType = "feedback/load";
 
 declare interface UserAction {
   type?: UserActionType;
@@ -94,6 +109,11 @@ declare interface UserAction {
 declare interface ProductAction {
   type?: ProductActionType;
   products?: Product[];
+}
+
+declare interface FeedbackAction {
+  type?: FeedbackActionType;
+  feedbacks?: Feedback[];
 }
 
 declare interface CommentAction {

@@ -138,3 +138,51 @@ export const getFormData = (data: any): FormData => {
   });
   return formData;
 };
+
+export const dateFormat = (date: Date, format: string) =>
+  format.replace(/yyyy|MM|dd|HH|mm|ss|SSS|AP/g, ($1) => {
+    const h = date.getHours();
+    const isOver12 = h > 12;
+    const is24 = format.indexOf("AP") > -1;
+    switch ($1) {
+      case "yyyy":
+        return date.getFullYear().toString().padStart(2, "0");
+      case "MM":
+        return (date.getMonth() + 1).toString().padStart(2, "0");
+      case "dd":
+        return date.getDate().toString().padStart(2, "0");
+      case "HH":
+        return (is24 && isOver12 ? h - 12 : h).toString().padStart(2, "0");
+      case "mm":
+        return date.getMinutes().toString().padStart(2, "0");
+      case "ss":
+        return date.getSeconds().toString().padStart(2, "0");
+      case "SSS":
+        return date.getMilliseconds().toString().padStart(3, "0");
+      case "AP":
+        return (isOver12 ? "PM" : "AP") as string;
+    }
+  });
+
+export const convertDateToTimezoneString = (date: Date) => {
+  return dateFormat(
+    new Date(date.getFullYear(), date.getMonth(), date.getDate()),
+    "yyyy-MM-ddTHH:mm:ss.SSS"
+  );
+};
+
+// yup 에러 메세지
+export const AVAILABLE_FILE_TYPE = ["JPG", "PNG", "GIF", "MP4", "WEBM"];
+
+export const REQUIRED_ERROR = "필수항목 입니다.";
+export const FILE_MODIFIED_ERROR = "파일의 수정시간이 잘못 되었습니다.";
+export const FILE_WEBKIT_PATH_ERROR = "상대경로가 잘못 되었습니다.";
+export const FILE_INSERT_TIME_ERROR = "파일 등록 일자가 잘못 되었습니다.";
+
+export const FILE_NAME_REGEXP = /(?=.+)\.(jp.?g|png|gif|webm|mp4)/i;
+export const FILE_TYPE_REGEXP = /image\/(jpg|jpeg|png|gif|mp4|webm)/i;
+export const FILE_NAME_ERROR = "파일명은 문자여야 합니다.";
+export const FILE_SIZE_ERROR = "파일 크기가 잘못되었습니다.";
+export const FILE_TYPE_ERROR = `파일형식이 다릅니다. 가능한 형식은 ${AVAILABLE_FILE_TYPE.join(
+  ", "
+)} 입니다.`;

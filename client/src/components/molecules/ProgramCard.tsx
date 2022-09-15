@@ -7,7 +7,7 @@ import TextOverflow from "../atoms/TextOverflow";
 import ViewIcon from "../atoms/ViewIcon";
 
 interface ProgramCard {
-  contents: any;
+  contents: Product;
   idx: number;
 }
 
@@ -83,7 +83,7 @@ function ProgramCard({ contents, idx }: ProgramCard) {
               {title}
             </Typography>
             <Stack direction='row' sx={{ gap: 2 }}>
-              <LikeIcon />
+              <LikeIcon pnum={num} />
               <ViewIcon count={view} />
             </Stack>
           </Stack>
@@ -94,12 +94,23 @@ function ProgramCard({ contents, idx }: ProgramCard) {
           {id}
         </Typography>
 
-        <TextOverflow>{content}</TextOverflow>
+        <TextOverflow>
+          {
+            new DOMParser().parseFromString(content, "text/html").body
+              .textContent
+          }
+        </TextOverflow>
         <Stack direction='row' sx={{ gap: 1 }}>
-          <Chip label='test' />
+          {tags.split("_").map((tag, idx) => (
+            <Chip key={tag + idx} label={tag} />
+          ))}
         </Stack>
-        <Typography variant='body2'>{start?.toLocaleString("ko")}</Typography>
-        <Typography variant='body2'>{end?.toLocaleString("ko")}</Typography>
+        <Typography variant='body2'>
+          {new Date(start)?.toLocaleString("ko")}
+        </Typography>
+        <Typography variant='body2'>
+          {new Date(end)?.toLocaleString("ko")}
+        </Typography>
       </Stack>
     </Stack>
   );

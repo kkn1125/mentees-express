@@ -1,5 +1,5 @@
-import { Button, Container, Stack, Toolbar } from "@mui/material";
-import React, { useContext } from "react";
+import { Alert, Button, Container, Stack, Toolbar } from "@mui/material";
+import React, { useContext, useMemo } from "react";
 import { Link } from "react-router-dom";
 import PaginationController from "../../components/molecules/PaginationController";
 import ProgramCard from "../../components/molecules/ProgramCard";
@@ -7,7 +7,17 @@ import { ProductContext } from "../../contexts/ProductProvider";
 
 function Programs() {
   const products = useContext(ProductContext);
-
+  const productList = useMemo(
+    () =>
+      products.length > 0 ? (
+        products.map((contents, idx) => (
+          <ProgramCard key={idx} contents={contents} idx={idx} />
+        ))
+      ) : (
+        <Alert severity='warning'>등록된 프로그램이 없습니다.</Alert>
+      ),
+    [products]
+  );
   return (
     <Container maxWidth={"lg"}>
       <Toolbar />
@@ -24,9 +34,7 @@ function Programs() {
         sx={{
           gap: 3,
         }}>
-        {products.map((contents, idx) => (
-          <ProgramCard key={idx} contents={contents} idx={idx} />
-        ))}
+        {productList}
       </Stack>
 
       <PaginationController />

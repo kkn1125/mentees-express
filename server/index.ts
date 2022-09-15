@@ -12,6 +12,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import authRouter from "./src/restController/authRestController.js";
 import oauthRouter from "./src/restController/kakaoRestController.js";
+import likeRouter from "./src/restController/likeRestController.js";
 import memberRouter from "./src/restController/memberRestController.js";
 import productRouter from "./src/restController/productRestController.js";
 import sseRouter from "./src/sse/index.js";
@@ -66,6 +67,7 @@ app.use(upload.any());
 app.use("/api", authRouter);
 app.use("/api", memberRouter);
 app.use("/api", productRouter);
+app.use("/api", likeRouter);
 app.use("/api/k", oauthRouter);
 
 app.use("/sse", sseRouter);

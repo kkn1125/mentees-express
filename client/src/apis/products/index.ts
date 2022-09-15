@@ -1,5 +1,5 @@
 import axios from "axios";
-import { baseUrl } from "../../utils/tools";
+import { baseUrl, getFormData } from "../../utils/tools";
 
 export default {
   findAll: () => {
@@ -7,5 +7,13 @@ export default {
   },
   findOne: (num: string) => {
     return axios.get(baseUrl + `/products/${num}`);
+  },
+  create: (product: Product) => {
+    const formData = getFormData(product);
+    return axios.post(baseUrl + `/products`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   },
 };

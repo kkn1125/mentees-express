@@ -82,7 +82,7 @@ const WideCard = ({ contents, idx }) => {
             {title}
           </Typography>
           <Stack direction='row' sx={{ gap: 2 }}>
-            <LikeIcon />
+            <LikeIcon pnum={num} type='feed' />
             <ViewIcon count={view} />
           </Stack>
         </Stack>
@@ -129,7 +129,7 @@ const ShortCard = ({ contents, idx }) => {
           <SmsOutlinedIcon />
         </ListItemIcon>
         <Stack direction='row' sx={{ gap: 2 }}>
-          <LikeIcon />
+          <LikeIcon pnum={num} type='feed' />
           <ViewIcon count={view} />
         </Stack>
       </Stack>

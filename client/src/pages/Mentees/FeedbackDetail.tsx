@@ -11,13 +11,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import CopyButton from "../../components/atoms/CopyButton";
+import LikeIcon from "../../components/atoms/LikeIcon";
+import ViewIcon from "../../components/atoms/ViewIcon";
 import UserProfile from "../../components/molecules/UserProfile";
+import { FeedbackContext } from "../../contexts/FeedbackProvider";
 
 function FeedbackDetail() {
   const navigate = useNavigate();
+  const params = useParams<any>();
+  const feedbacks = useContext(FeedbackContext);
+
+  const feedback = useMemo<Feedback>(
+    () => feedbacks.find((prod) => prod.num === Number(params.num)) || {},
+    [feedbacks]
+  );
 
   return (
     <Container sx={{ pt: 10 }}>
@@ -36,6 +46,12 @@ function FeedbackDetail() {
             }}>
             Title
           </Typography>
+          <Stack direction='row' sx={{ gap: 3 }}>
+            <Stack direction='row' sx={{ gap: 1 }}>
+              <LikeIcon pnum={feedback.num} type='feed' />
+              <ViewIcon count={feedback.view} />
+            </Stack>
+          </Stack>
         </Stack>
         <CopyButton url={`${location.href}`} />
       </Stack>

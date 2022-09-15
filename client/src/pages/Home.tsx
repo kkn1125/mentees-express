@@ -8,6 +8,7 @@ import ProgramCard from "../components/molecules/ProgramCard";
 import SectionTitle from "../components/molecules/SectionTitle";
 import SkillSet from "../components/molecules/SkillSet";
 import UserInformation from "../components/organisms/UserInformation";
+import { FeedbackContext } from "../contexts/FeedbackProvider";
 import { ProductContext } from "../contexts/ProductProvider";
 import { dummyFeedbacks } from "../utils/tools";
 
@@ -28,12 +29,32 @@ const tooltips = {
 function Home() {
   const [userList, setUserList] = useState([]);
   const products = useContext(ProductContext);
+  const feedbacks = useContext(FeedbackContext);
   const productList = useMemo(
     () =>
-      products.map((contents, idx) => (
-        <ProgramCard key={idx} contents={contents} idx={idx} />
-      )),
+      products.length > 0 ? (
+        products.map((contents, idx) => (
+          <ProgramCard key={idx} contents={contents} idx={idx} />
+        ))
+      ) : (
+        <Alert severity='warning' sx={{ flex: 1 }}>
+          등록된 상품이 없습니다.
+        </Alert>
+      ),
     [products]
+  );
+  const feedbackList = useMemo(
+    () =>
+      feedbacks.length > 0 ? (
+        feedbacks.map((contents, idx) => (
+          <FeedbackCard key={idx} contents={contents} idx={idx} />
+        ))
+      ) : (
+        <Alert severity='warning' sx={{ flex: 1 }}>
+          등록된 피드백이 없습니다.
+        </Alert>
+      ),
+    [feedbacks]
   );
 
   useEffect(() => {
@@ -67,12 +88,7 @@ function Home() {
             tooltip={tooltips.programs}
           />
           {/* Program Cards */}
-          <Stack sx={{ mt: 3, gap: 5 }}>
-            {products.length === 0 && (
-              <Alert severity='warning'>등록된 상품이 없습니다.</Alert>
-            )}
-            {productList}
-          </Stack>
+          <Stack sx={{ mt: 3, gap: 5 }}>{productList}</Stack>
         </Box>
 
         {/* Section 03 - hot mentee */}
@@ -102,9 +118,7 @@ function Home() {
             flexWrap='wrap'
             justifyContent='flex-start'
             sx={{ mt: 3, gap: { xs: 5, md: 2 } }}>
-            {dummyFeedbacks.map((item, idx) => (
-              <FeedbackCard key={idx} contents={item} idx={idx} />
-            ))}
+            {feedbackList}
           </Stack>
         </Box>
 

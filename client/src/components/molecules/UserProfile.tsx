@@ -1,6 +1,6 @@
 import { Avatar, Stack, Typography } from "@mui/material";
 import React from "react";
-import { orElseImage } from "../../utils/tools";
+import { dateFormat, orElseImage } from "../../utils/tools";
 
 interface UserProfileProps {
   nickname: string;
@@ -16,7 +16,9 @@ function UserProfile({ nickname, src, time }: UserProfileProps) {
         <Typography variant='body1' sx={{ fontWeight: 700 }}>
           {nickname}
         </Typography>
-        <Typography variant='body2'>{time.toLocaleString()}</Typography>
+        <Typography variant='body2'>
+          {dateFormat(time, "yyyy. MM. dd HH:mm")}
+        </Typography>
       </Stack>
     </Stack>
   );

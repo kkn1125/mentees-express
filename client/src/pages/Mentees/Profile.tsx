@@ -22,23 +22,12 @@ import {
   userSave,
 } from "../../contexts/UserProvider";
 import useSnack from "../../hooks/useSnack";
-import { orElseImage } from "../../utils/tools";
-
-// yup 에러 메세지
-export const AVAILABLE_FILE_TYPE = ["JPG", "PNG", "GIF", "MP4", "WEBM"];
-
-export const REQUIRED_ERROR = "필수항목 입니다.";
-export const FILE_MODIFIED_ERROR = "파일의 수정시간이 잘못 되었습니다.";
-export const FILE_WEBKIT_PATH_ERROR = "상대경로가 잘못 되었습니다.";
-export const FILE_INSERT_TIME_ERROR = "파일 등록 일자가 잘못 되었습니다.";
-
-export const FILE_NAME_REGEXP = /(?=.+)\.(jp.?g|png|gif|webm|mp4)/i;
-export const FILE_TYPE_REGEXP = /image\/(jpg|jpeg|png|gif|mp4|webm)/i;
-export const FILE_NAME_ERROR = "파일명은 문자여야 합니다.";
-export const FILE_SIZE_ERROR = "파일 크기가 잘못되었습니다.";
-export const FILE_TYPE_ERROR = `파일형식이 다릅니다. 가능한 형식은 ${AVAILABLE_FILE_TYPE.join(
-  ", "
-)} 입니다.`;
+import {
+  FILE_NAME_REGEXP,
+  FILE_TYPE_ERROR,
+  FILE_TYPE_REGEXP,
+  orElseImage,
+} from "../../utils/tools";
 
 const validationSchema = yup.object({
   email: yup.string().notRequired(),

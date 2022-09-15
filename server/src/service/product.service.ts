@@ -61,12 +61,19 @@ Product.findOne = (req, res) => {
 };
 
 Product.create = (req, res) => {
+  if (req.files && req.files[0]) {
+    const cover = req.files[0];
+    req.body.cover = cover.filename;
+  }
+  console.log(req.body);
+  console.log(req.files);
   sql.query("INSERT INTO product SET ?", req.body, (error: any, rows: any) => {
     try {
       if (error) {
+        console.log(error);
         res.status(500).json({
           ok: false,
-          message: error.message || "Not found products",
+          message: "서버에서 문제가 발생했습니다.",
         });
       }
 
