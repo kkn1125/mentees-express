@@ -1,5 +1,4 @@
 import router from "express";
-import authJWT from "../middleware/authJWT.js";
 import likeService from "../service/like.service.js";
 
 const likeRouter = router.Router();

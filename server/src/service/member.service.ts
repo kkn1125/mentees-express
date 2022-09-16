@@ -3,7 +3,11 @@ import bcrypt from "bcrypt";
 import Member from "../models/member.js";
 import sql from "../db/mysqlDatabase.js";
 import jwtUtil from "../utils/jwt-util.js";
-import { CustomException } from "../utils/customException.js";
+import {
+  CustomException,
+  errorMessage,
+  throwException,
+} from "../utils/customException.js";
 
 const saltRounds = 10;
 
@@ -16,28 +20,13 @@ Member.signin = (req, res) => {
     (err, rows) => {
       try {
         if (rows.length === 0) {
-          throw new CustomException({
-            message:
-              "일치하는 회원 정보가 없습니다. 로그인을 다시 시도 해주세요.",
-            status: 404,
-            ok: false,
-          });
+          throwException(errorMessage.signin[404], 404, false);
         } else if (err) {
-          throw new CustomException({
-            message:
-              "로그인 시도에서 문제가 발생했습니다. 새로고침 후 다시 시도해주세요.",
-            status: 500,
-            ok: false,
-          });
+          throwException(errorMessage.signin[500], 500, false);
         }
         bcrypt.compare(req.body.pw, rows[0].pw, (error, same) => {
           if (error) {
-            throw new CustomException({
-              message:
-                "계정 정보가 일치하지 않습니다. 로그인을 다시 시도 해주세요.",
-              status: 500,
-              ok: false,
-            });
+            throwException(errorMessage.signin.compare, 500, false);
           }
           if (same) {
             const { pw, ...user } = rows[0];
@@ -51,11 +40,7 @@ Member.signin = (req, res) => {
               },
             });
           } else {
-            throw new CustomException({
-              message: "패스워드가 일치하지 않습니다.",
-              status: 401,
-              ok: false,
-            });
+            throwException(errorMessage.signin.password, 401, false);
           }
         });
       } catch (e: any) {
@@ -79,17 +64,18 @@ Member.fileUpload = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(500).json({
-            ok: false,
-            message: error.message || "Not found members",
-          });
+          throwException(errorMessage[500], 500, false);
         }
         res.status(201).json({
           ok: true,
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );
@@ -99,17 +85,18 @@ Member.findAll = (req, res) => {
   sql.query("SELECT * FROM member", (error: any, rows: any) => {
     try {
       if (error) {
-        res.status(500).json({
-          ok: false,
-          message: error.message || "Not found members",
-        });
+        throwException(errorMessage[500], 500, false);
       }
       res.json({
         ok: true,
         payload: rows,
       } as APIResponse);
     } catch (e: any) {
-      /** */
+      res.status(e.status).json({
+        status: e.status,
+        ok: e.ok,
+        message: e.message,
+      });
     }
   });
 };
@@ -123,22 +110,13 @@ Member.findOne = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(500).json({
-            ok: false,
-            message: error.message,
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (!num.trim()) {
-          res.status(400).json({ ok: false, message: "파라미터가 없습니다." });
+          throwException(errorMessage[422]("member"), 422, false);
         } else if (!num.match(/^[\d]+$/)) {
-          res.status(400).json({
-            ok: false,
-            message: "파라미터 값이 잘못 되었습니다.",
-          });
+          throwException(errorMessage[400]("member"), 400, false);
         } else if (rows.length === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "계정 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("member"), 404, false);
         }
 
         res.json({
@@ -146,7 +124,11 @@ Member.findOne = (req, res) => {
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );
@@ -161,17 +143,11 @@ Member.findById = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(500).json({
-            ok: false,
-            message: error.message,
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (!id.trim()) {
-          res.status(400).json({ ok: false, message: "파라미터가 없습니다." });
+          throwException(errorMessage[422]("member"), 422, false);
         } else if (rows.length === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "계정 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("member"), 404, false);
         }
 
         res.json({
@@ -179,7 +155,11 @@ Member.findById = (req, res) => {
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );
@@ -195,10 +175,7 @@ Member.create = (req, res) => {
     sql.query("INSERT INTO member SET ?", req.body, (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(500).json({
-            ok: false,
-            message: error.message || "Not found members",
-          });
+          throwException(errorMessage[500], 500, false);
         }
 
         res.json({
@@ -206,7 +183,11 @@ Member.create = (req, res) => {
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     });
   });
@@ -225,22 +206,20 @@ Member.update = (req, res) => {
       (error: any, rows: any) => {
         try {
           if (error) {
-            res.status(400).json({
-              ok: false,
-              message: error.message || "Not found members",
-            });
+            throwException(errorMessage[500], 500, false);
           } else if (rows.affectedRows === 0) {
-            res.status(404).json({
-              ok: false,
-              message: "계정 정보가 없습니다.",
-            });
+            throwException(errorMessage[404]("member"), 404, false);
           }
           res.status(201).json({
             ok: true,
             payload: rows,
           } as APIResponse);
         } catch (e: any) {
-          /** */
+          res.status(e.status).json({
+            status: e.status,
+            ok: e.ok,
+            message: e.message,
+          });
         }
       }
     );
@@ -254,22 +233,21 @@ Member.delete = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(400).json({
-            ok: false,
-            message: error.message || "Not found members",
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (rows.affectedRows === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "계정 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("member"), 404, false);
         }
+
         res.json({
           ok: true,
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );

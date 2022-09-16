@@ -96,7 +96,7 @@ export default function App() {
             }
           />
           <Route path='feedback' element={<Feedback />} />
-          <Route path='feedback/form' element={<WriteForm type='feed' />} />
+          <Route path='feedback/form' element={<WriteForm type='feedback' />} />
           <Route path='feedback/:num' element={<FeedbackDetail />} />
           <Route path=':num' element={<Detail />} />
           <Route

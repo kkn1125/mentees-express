@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Request, Response } from "express-serve-static-core";
 import qs from "qs";
+import { errorMessage, throwException } from "../utils/customException.js";
 import { objectToQueryString } from "../utils/tools.js";
 
 const authorize = (req, res) => {
@@ -36,7 +37,7 @@ const token = async (
   } catch (e: any) {
     res.status(500).json({
       ok: false,
-      message: e.message,
+      message: errorMessage[500],
     });
   }
 };
@@ -55,25 +56,22 @@ const me = async (
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         },
       }
     );
     if (data.status === 401) {
-      res.status(401).json({
-        ok: false,
-        message: "잘못된 요청입니다.",
-      });
+      throwException(errorMessage[400]("kakao"), 400, false);
     }
     res.status(200).json({
       ok: true,
       payload: data,
     });
   } catch (e: any) {
-    console.debug(e);
     res.status(e.status).json({
-      ok: false,
-      message: e.status === 401 ? "잘못된 요청입니다." : e.message,
+      status: e.status,
+      ok: e.ok,
+      message: e.message,
     });
   }
 };
@@ -91,13 +89,13 @@ const logout = (
       const { data } = result;
       res.status(200).json({
         ok: true,
-        message: "카카오 계정이 정상 로그아웃 되었습니다.",
+        message: errorMessage.kakao.signout,
       });
     })
     .catch((e) => {
       res.status(500).json({
         ok: false,
-        message: "서버에 오류가 발생했습니다.",
+        message: errorMessage[500],
       });
     });
 };

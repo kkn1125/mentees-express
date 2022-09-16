@@ -79,7 +79,7 @@ function Profile() {
       const { email, id, cover } = values;
       if (email !== users.email || id !== users.id || cover !== users.cover) {
         api.members
-          .updateById(
+          .updateByNum(
             String(users.num),
             {
               email,

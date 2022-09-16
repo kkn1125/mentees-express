@@ -10,6 +10,7 @@ import SnackbarProvider from "./contexts/SnackbarProvider";
 import UserProvider from "./contexts/UserProvider";
 import ProductProvider from "./contexts/ProductProvider";
 import CommentProvider from "./contexts/CommentProvider";
+import FeedbackProvider from "./contexts/FeedbackProvider";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement!);
@@ -31,16 +32,18 @@ root.render(
     {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
     <CssBaseline />
     <GlobalStyles styles={globalStyles} />
-    <CommentProvider>
-      <ProductProvider>
-        <UserProvider>
-          <SnackbarProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </SnackbarProvider>
-        </UserProvider>
-      </ProductProvider>
-    </CommentProvider>
+    <FeedbackProvider>
+      <CommentProvider>
+        <ProductProvider>
+          <UserProvider>
+            <SnackbarProvider>
+              <BrowserRouter>
+                <App />
+              </BrowserRouter>
+            </SnackbarProvider>
+          </UserProvider>
+        </ProductProvider>
+      </CommentProvider>
+    </FeedbackProvider>
   </ThemeProvider>
 );

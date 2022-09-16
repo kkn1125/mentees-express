@@ -18,6 +18,23 @@ import LikeIcon from "../../components/atoms/LikeIcon";
 import ViewIcon from "../../components/atoms/ViewIcon";
 import UserProfile from "../../components/molecules/UserProfile";
 import { FeedbackContext } from "../../contexts/FeedbackProvider";
+import parse, {
+  DOMNode,
+  Element,
+  HTMLReactParserOptions,
+} from "html-react-parser";
+
+const options: HTMLReactParserOptions = {
+  replace: (domNode: DOMNode) => {
+    if (
+      domNode instanceof Element &&
+      domNode.attribs &&
+      domNode.attribs.class === "remove"
+    ) {
+      return <></>;
+    }
+  },
+};
 
 function FeedbackDetail() {
   const navigate = useNavigate();
@@ -64,20 +81,9 @@ function FeedbackDetail() {
       />
 
       <Typography variant='body1' sx={{ my: 5 }}>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Obcaecati,
-        facere! Aspernatur vero adipisci culpa! Quam, perferendis libero
-        quisquam enim non quibusdam dicta totam autem alias. Pariatur eos
-        expedita facilis tenetur in. Obcaecati magnam dicta fugit quia quaerat
-        libero exercitationem deleniti, labore aperiam, quod explicabo beatae
-        nulla vitae accusamus esse natus ullam aliquam, ducimus consequatur
-        iusto. Pariatur, beatae quas atque dolor eaque nisi! Blanditiis nam
-        tenetur sunt aspernatur, facere delectus, fuga inventore voluptates
-        provident quas quisquam assumenda praesentium corrupti deserunt,
-        perspiciatis laborum! Nihil blanditiis voluptates officia esse numquam
-        nulla nisi qui consequatur molestias similique, quae impedit dicta quod
-        sint pariatur voluptatibus.
+        {parse(feedback.content, options)}
       </Typography>
-      <Stack
+      {/* <Stack
         direction='row'
         justifyContent='flex-end'
         alignItems='center'
@@ -85,7 +91,7 @@ function FeedbackDetail() {
         <Button color='error' variant='contained'>
           찜하기
         </Button>
-      </Stack>
+      </Stack> */}
 
       <Divider sx={{ my: 2 }} />
 

@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../apis";
 import { ProductContext } from "../../contexts/ProductProvider";
 import { UserContext } from "../../contexts/UserProvider";
+import useSnack from "../../hooks/useSnack";
 
 interface LikeIconProps {
   pnum?: number;
@@ -15,27 +16,34 @@ function LikeIcon({ pnum, type }: LikeIconProps) {
   const [own, setOwn] = useState<boolean>(false);
   const users = useContext(UserContext);
   const products = useContext(ProductContext);
+  const { warningSnack } = useSnack();
 
   useEffect(() => {
     // api 사용해야 함
     if (pnum) {
-      api[type].findByPid(pnum).then((result) => {
-        const { data } = result;
-        const { payload } = data;
-        // console.log(data);
-        setCount(payload ? payload.length : 0);
-        setOwn(Boolean(payload.find((like) => like.mnum === users.num)));
-      });
+      api[type][type === "feed" ? "findByFnum" : "findByPnum"](pnum).then(
+        (result) => {
+          const { data } = result;
+          const { payload } = data;
+          // console.log(data);
+          setCount(payload ? payload.length : 0);
+          setOwn(Boolean(payload.find((like) => like.mnum === users.num)));
+        }
+      );
     }
   }, [products]);
 
   const handleCount = () => {
+    if (!users.num) {
+      warningSnack("로그인 후 사용 해주세요.");
+      return;
+    }
     if (!own) {
       setCount(count + 1);
-      api.likes.create(pnum, users.num);
+      api[type].create(pnum, users.num);
     } else {
       setCount(count - 1);
-      api.likes.delete(pnum, users.num);
+      api[type].delete(pnum, users.num);
     }
     setOwn(!own);
   };

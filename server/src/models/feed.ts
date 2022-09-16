@@ -1,6 +1,6 @@
-class Like {
+class Feed {
   static findAll: (req: any, res: any) => void;
-  static findByPnum: (req: any, res: any) => void;
+  static findByFnum: (req: any, res: any) => void;
   static findByMnum: (req: any, res: any) => void;
   static create: (req: any, res: any) => void;
   static delete: (req: any, res: any) => void;
@@ -15,4 +15,4 @@ class Like {
   }
 }
 
-export default Like;
+export default Feed;

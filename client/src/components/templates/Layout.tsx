@@ -6,6 +6,10 @@ import { useCookies } from "react-cookie";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../apis";
 import {
+  FeedbackDispatchContext,
+  feedbacksLoad,
+} from "../../contexts/FeedbackProvider";
+import {
   ProductDispatchContext,
   productsLoad,
 } from "../../contexts/ProductProvider";
@@ -31,6 +35,7 @@ function Layout() {
   const userDispatch = useContext(UserDispatchContext);
   const [cookies, setCookie] = useCookies(["token"]);
   const productDispatch = useContext(ProductDispatchContext);
+  const feedbackDispatch = useContext(FeedbackDispatchContext);
 
   useEffect(() => {
     AOS.init();
@@ -40,8 +45,13 @@ function Layout() {
       const products = JSON.parse(e.data);
       productDispatch(productsLoad(products));
     };
+    const feedbackBroadcast = (e) => {
+      const feedbacks = JSON.parse(e.data);
+      feedbackDispatch(feedbacksLoad(feedbacks));
+    };
 
-    sse.addEventListener("broadcast", productBroadcast);
+    sse.addEventListener("product", productBroadcast);
+    sse.addEventListener("feedback", feedbackBroadcast);
 
     const queryMap = queryStringToObject(locate.search);
     const kakaoLogin = async () => {
@@ -51,17 +61,18 @@ function Layout() {
         navigate("/");
         successSnack("카카오 계정 로그인에 성공했습니다.");
       }
-
       return data;
     };
+
     if (queryMap.code) {
       kakaoLogin().catch((e) => {
         errorSnack(e.message);
         navigate("/auth/signin");
       });
     }
+
     return () => {
-      sse.removeEventListener("broadcast", productBroadcast);
+      sse.removeEventListener("product", productBroadcast);
     };
   }, []);
 

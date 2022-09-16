@@ -143,7 +143,7 @@ function Detail() {
 
         <Stack direction='row' justifyContent='space-between' sx={{ gap: 2 }}>
           <Stack direction='row' sx={{ gap: 2 }}>
-            {product.tags.split("_").map((tag, idx) => (
+            {(product.tags || "").split("_").map((tag, idx) => (
               <Chip key={tag + idx} label={tag} />
             ))}
           </Stack>
@@ -152,9 +152,9 @@ function Detail() {
             <Button color='success' variant='contained'>
               신청
             </Button>
-            <Button color='error' variant='contained'>
+            {/* <Button color='error' variant='contained'>
               찜하기
-            </Button>
+            </Button> */}
           </Stack>
         </Stack>
 
@@ -173,7 +173,7 @@ function Detail() {
         </Stack>
 
         <Typography variant='h6' gutterBottom sx={{ mt: 5, fontWeight: 700 }}>
-          Comments
+          Comments [{}]
         </Typography>
 
         <Box component={Paper} elevation={5} sx={{ p: 3 }}>

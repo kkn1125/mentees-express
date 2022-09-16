@@ -69,7 +69,7 @@ declare interface Product {
 }
 
 /**
- * products types
+ * feedbacks types
  */
 declare interface Feedback {
   num?: number | null;
@@ -83,7 +83,7 @@ declare interface Feedback {
 }
 
 /**
- * products types
+ * comments types
  */
 declare interface Comments {
   num?: number | null;

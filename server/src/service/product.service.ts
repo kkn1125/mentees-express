@@ -2,22 +2,28 @@ import { APIResponse } from "../utils/tools.js";
 
 import Product from "../models/product.js";
 import sql from "../db/mysqlDatabase.js";
+import {
+  CustomException,
+  errorMessage,
+  throwException,
+} from "../utils/customException.js";
 
 Product.findAll = (req, res) => {
   sql.query("SELECT * FROM product", (error: any, rows: any) => {
     try {
       if (error) {
-        res.status(500).json({
-          ok: false,
-          message: error.message || "Not found products",
-        });
+        throwException(errorMessage[500], 500, false);
       }
       res.json({
         ok: true,
         payload: rows,
       } as APIResponse);
     } catch (e: any) {
-      /** */
+      res.status(e.status).json({
+        status: e.status,
+        ok: e.ok,
+        message: e.message,
+      });
     }
   });
 };
@@ -31,22 +37,13 @@ Product.findOne = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(500).json({
-            ok: false,
-            message: error.message,
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (!num.trim()) {
-          res.status(400).json({ ok: false, message: "파라미터가 없습니다." });
+          throwException(errorMessage[422]("product"), 422, false);
         } else if (!num.match(/^[\d]+$/)) {
-          res.status(400).json({
-            ok: false,
-            message: "파라미터 값이 잘못 되었습니다.",
-          });
+          throwException(errorMessage[400]("product"), 400, false);
         } else if (rows.length === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "상품 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("product"), 404, false);
         }
 
         res.json({
@@ -54,7 +51,11 @@ Product.findOne = (req, res) => {
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );
@@ -70,11 +71,7 @@ Product.create = (req, res) => {
   sql.query("INSERT INTO product SET ?", req.body, (error: any, rows: any) => {
     try {
       if (error) {
-        console.log(error);
-        res.status(500).json({
-          ok: false,
-          message: "서버에서 문제가 발생했습니다.",
-        });
+        throwException(errorMessage[500], 500, false);
       }
 
       res.json({
@@ -97,22 +94,20 @@ Product.update = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(400).json({
-            ok: false,
-            message: error.message || "Not found products",
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (rows.affectedRows === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "상품 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("product"), 404, false);
         }
         res.status(201).json({
           ok: true,
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );
@@ -125,22 +120,20 @@ Product.delete = (req, res) => {
     (error: any, rows: any) => {
       try {
         if (error) {
-          res.status(400).json({
-            ok: false,
-            message: error.message || "Not found products",
-          });
+          throwException(errorMessage[500], 500, false);
         } else if (rows.affectedRows === 0) {
-          res.status(404).json({
-            ok: false,
-            message: "상품 정보가 없습니다.",
-          });
+          throwException(errorMessage[404]("product"), 404, false);
         }
         res.json({
           ok: true,
           payload: rows,
         } as APIResponse);
       } catch (e: any) {
-        /** */
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
       }
     }
   );

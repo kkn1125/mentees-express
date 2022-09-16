@@ -1,10 +1,11 @@
 import { APIResponse } from "../utils/tools.js";
-import Like from "../models/like.js";
+
+import Feedback from "../models/feedback.js";
 import sql from "../db/mysqlDatabase.js";
 import { errorMessage, throwException } from "../utils/customException.js";
 
-Like.findAll = (req, res) => {
-  sql.query("SELECT * FROM likes", (error: any, rows: any) => {
+Feedback.findAll = (req, res) => {
+  sql.query("SELECT * FROM feedback", (error: any, rows: any) => {
     try {
       if (error) {
         throwException(errorMessage[500], 500, false);
@@ -24,18 +25,22 @@ Like.findAll = (req, res) => {
   });
 };
 
-Like.findByMnum = (req, res) => {
+Feedback.findOne = (req, res) => {
+  const { num } = req.params;
+
   sql.query(
-    "SELECT * FROM likes WHERE ?",
+    "SELECT * FROM feedback WHERE ?",
     req.params,
     (error: any, rows: any) => {
       try {
         if (error) {
           throwException(errorMessage[500], 500, false);
-        } else if (!req.params.mnum.trim()) {
-          throwException(errorMessage[422]("like"), 422, false);
+        } else if (!num.trim()) {
+          throwException(errorMessage[422]("feedback"), 422, false);
+        } else if (!num.match(/^[\d]+$/)) {
+          throwException(errorMessage[400]("feedback"), 400, false);
         } else if (rows.length === 0) {
-          throwException(errorMessage[404]("like"), 404, false);
+          throwException(errorMessage[404]("feedback"), 404, false);
         }
 
         res.status(200).json({
@@ -53,36 +58,8 @@ Like.findByMnum = (req, res) => {
   );
 };
 
-Like.findByPnum = (req, res) => {
-  const { pnum } = req.params;
-  sql.query(
-    "SELECT * FROM likes WHERE pnum=?",
-    pnum,
-    (error: any, rows: any) => {
-      try {
-        if (error) {
-          throwException(errorMessage[500], 500, false);
-        } else if (!req.params.pnum.trim()) {
-          throwException(errorMessage[422]("like"), 422, false);
-        }
-
-        res.status(200).json({
-          ok: true,
-          payload: rows,
-        } as APIResponse);
-      } catch (e: any) {
-        res.status(e.status).json({
-          status: e.status,
-          ok: e.ok,
-          message: e.message,
-        });
-      }
-    }
-  );
-};
-
-Like.create = (req, res) => {
-  sql.query("INSERT INTO likes SET ?", req.body, (error: any, rows: any) => {
+Feedback.create = (req, res) => {
+  sql.query("INSERT INTO feedback SET ?", req.body, (error: any, rows: any) => {
     try {
       if (error) {
         throwException(errorMessage[500], 500, false);
@@ -102,18 +79,43 @@ Like.create = (req, res) => {
   });
 };
 
-Like.delete = (req, res) => {
-  const { pnum } = req.params;
-  const { mnum } = req.body;
+Feedback.update = (req, res) => {
   sql.query(
-    "DELETE FROM likes WHERE pnum=? AND mnum=?",
-    [pnum, mnum],
+    "UPDATE feedback SET ? WHERE ?",
+    [req.body, req.params],
     (error: any, rows: any) => {
       try {
         if (error) {
           throwException(errorMessage[500], 500, false);
         } else if (rows.affectedRows === 0) {
-          throwException(errorMessage[404]("like"), 404, false);
+          throwException(errorMessage[404]("feedback"), 404, false);
+        }
+
+        res.status(201).json({
+          ok: true,
+          payload: rows,
+        } as APIResponse);
+      } catch (e: any) {
+        res.status(e.status).json({
+          status: e.status,
+          ok: e.ok,
+          message: e.message,
+        });
+      }
+    }
+  );
+};
+
+Feedback.delete = (req, res) => {
+  sql.query(
+    "DELETE FROM feedback WHERE ?",
+    req.params,
+    (error: any, rows: any) => {
+      try {
+        if (error) {
+          throwException(errorMessage[500], 500, false);
+        } else if (rows.affectedRows === 0) {
+          throwException(errorMessage[404]("feedback"), 404, false);
         }
 
         res.status(200).json({
@@ -131,4 +133,4 @@ Like.delete = (req, res) => {
   );
 };
 
-export default Like;
+export default Feedback;

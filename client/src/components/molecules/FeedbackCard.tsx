@@ -165,9 +165,9 @@ const ShortCard = ({ contents, idx }) => {
           gap: 1,
         }}>
         <Stack direction='row' alignItems='center' sx={{ gap: 1 }}>
-          <FeedbackUser cover={cover} />
+          <FeedbackUser cover={cover} author={author} />
         </Stack>
-        <CopyButton url={location.href} />
+        <CopyButton url={`${location.origin}/mentees/feedback/${num}`} />
       </ListItem>
     </List>
   );

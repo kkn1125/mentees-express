@@ -41,12 +41,12 @@ import {
 
 interface WriteFormprops {
   mode: "create" | "update";
-  type: "product" | "feed";
+  type: "product" | "feedback";
 }
 
 interface FormProps {
   product?: any;
-  type: "product" | "feed";
+  type: "product" | "feedback";
 }
 
 interface DayjsSet {
@@ -106,12 +106,12 @@ const CreateForm = ({ product, type }: FormProps) => {
   const { successSnack, warningSnack, errorSnack } = useSnack();
   const formik = useFormik({
     initialValues: {
-      [type === "feed" ? "author" : "id"]: "",
+      [type === "feedback" ? "author" : "id"]: "",
       title: "",
       content: "",
       cover: null,
       tags: "",
-      ...(type !== "feed" && {
+      ...(type !== "feedback" && {
         address: "",
         start: "",
         end: "",
@@ -146,7 +146,7 @@ const CreateForm = ({ product, type }: FormProps) => {
   });
 
   useEffect(() => {
-    formik.values[type === "feed" ? "author" : "id"] = users.id;
+    formik.values[type === "feedback" ? "author" : "id"] = users.id;
   }, [users]);
 
   const [dates, setDates] = useState<DayjsSet>({
@@ -237,7 +237,7 @@ const CreateForm = ({ product, type }: FormProps) => {
             },
             gap: 3,
           }}>
-          {type !== "feed" && (
+          {type !== "feedback" && (
             <Fragment>
               {/* 프로그램 시작 */}
               <PointDatePicker
@@ -288,7 +288,7 @@ const CreateForm = ({ product, type }: FormProps) => {
             handleTagChange={handleTagChange}
           />
 
-          {type !== "feed" && (
+          {type !== "feedback" && (
             <Fragment>
               {/* 위치/장소 지정 */}
               <TextField

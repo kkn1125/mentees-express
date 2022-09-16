@@ -2,7 +2,12 @@ import { Avatar, ListItemText } from "@mui/material";
 import React, { Fragment } from "react";
 import { orElseImage } from "../../utils/tools";
 
-function FeedbackUser({ cover }: { cover: string }) {
+interface FeedbackUserProps {
+  cover: string;
+  author: string;
+}
+
+function FeedbackUser({ cover, author }: FeedbackUserProps) {
   return (
     <Fragment>
       <Avatar
@@ -14,7 +19,7 @@ function FeedbackUser({ cover }: { cover: string }) {
         }}
       />
       <ListItemText
-        secondary='nickname'
+        secondary={author}
         sx={{
           [`.MuiTypography-root.MuiListItemText-secondary`]: {
             fontWeight: 700,
