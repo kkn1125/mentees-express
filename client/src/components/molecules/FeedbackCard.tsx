@@ -16,17 +16,21 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import CommentIcon from "../atoms/CommentIcon";
 import CopyButton from "../atoms/CopyButton";
 import FeedbackUser from "../atoms/FeedbackUser";
 import LikeIcon from "../atoms/LikeIcon";
 import TextOverflow from "../atoms/TextOverflow";
 import ViewIcon from "../atoms/ViewIcon";
+import TagIcon from "@mui/icons-material/Tag";
+import { userReset } from "../../contexts/UserProvider";
 
 interface FeedbackCardProps {
   contents: any;
   idx: number;
   wide: boolean;
   comments: Comments[];
+  user?: User;
 }
 
 const WideCard = ({ contents, idx, comments }) => {
@@ -85,12 +89,7 @@ const WideCard = ({ contents, idx, comments }) => {
             {title}
           </Typography>
           <Stack direction='row' sx={{ gap: 1 }}>
-            <Stack direction='row' alignItems='center'>
-              <IconButton>
-                <SmsOutlinedIcon />
-              </IconButton>
-              {comments.length}
-            </Stack>
+            <CommentIcon count={comments.length} />
             <LikeIcon pnum={num} type='feeds' />
             <ViewIcon count={view} />
           </Stack>
@@ -116,8 +115,8 @@ const WideCard = ({ contents, idx, comments }) => {
   );
 };
 
-const ShortCard = ({ contents, idx, comments }) => {
-  const { num, view, title, content, cover, author, tags, regdate, updates } =
+const ShortCard = ({ contents, idx, comments, user }) => {
+  const { num, view, title, content, author, tags, regdate, updates } =
     contents;
 
   return (
@@ -143,12 +142,7 @@ const ShortCard = ({ contents, idx, comments }) => {
           <SmsOutlinedIcon />
         </ListItemIcon>
         <Stack direction='row' sx={{ gap: 1 }}>
-          <Stack direction='row' alignItems='center'>
-            <IconButton>
-              <SmsOutlinedIcon />
-            </IconButton>
-            {comments.length}
-          </Stack>
+          <CommentIcon count={comments.length} />
           <LikeIcon pnum={num} type='feeds' />
           <ViewIcon count={view} />
         </Stack>
@@ -171,9 +165,18 @@ const ShortCard = ({ contents, idx, comments }) => {
       <Divider />
       <ListItem>
         <ListItemText
-          primary='tags'
+          primary='Tags'
           secondary={tags.split("_").map((item, idx) => (
-            <Chip key={idx} size='small' label='test' />
+            <Chip
+              icon={<TagIcon />}
+              key={idx}
+              size='small'
+              label={item}
+              color={"info"}
+              sx={{
+                fontSize: (theme) => theme.typography.pxToRem(12),
+              }}
+            />
           ))}
           primaryTypographyProps={{
             mb: 1,
@@ -192,7 +195,7 @@ const ShortCard = ({ contents, idx, comments }) => {
           gap: 1,
         }}>
         <Stack direction='row' alignItems='center' sx={{ gap: 1 }}>
-          <FeedbackUser cover={cover} author={author} />
+          <FeedbackUser author={author} user={user} />
         </Stack>
         <CopyButton url={`${location.origin}/mentees/feedback/${num}`} />
       </ListItem>
@@ -200,13 +203,19 @@ const ShortCard = ({ contents, idx, comments }) => {
   );
 };
 
-function FeedbackCard({ contents, idx, wide, comments }: FeedbackCardProps) {
+function FeedbackCard({
+  contents,
+  idx,
+  wide,
+  comments,
+  user,
+}: FeedbackCardProps) {
   const navigate = useNavigate();
 
   return wide ? (
     <WideCard contents={contents} idx={idx} comments={comments} />
   ) : (
-    <ShortCard contents={contents} idx={idx} comments={comments} />
+    <ShortCard contents={contents} idx={idx} comments={comments} user={user} />
   );
 }
 

@@ -1,5 +1,5 @@
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { IconButton, Stack, SvgIcon, Typography } from "@mui/material";
+import { IconButton, Stack, SvgIcon, Tooltip, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
 function ViewIcon({ count }: { count: number }) {
@@ -12,11 +12,13 @@ function ViewIcon({ count }: { count: number }) {
 
   return (
     <Stack direction='row' alignItems='center' sx={{ gap: 0.5 }}>
-      <IconButton>
-        <SvgIcon fontSize='small'>
-          <VisibilityIcon />
-        </SvgIcon>
-      </IconButton>
+      <Tooltip title='봤어요' placement='bottom'>
+        <IconButton>
+          <SvgIcon fontSize='small'>
+            <VisibilityIcon />
+          </SvgIcon>
+        </IconButton>
+      </Tooltip>
       <Typography variant='body2'>{count}</Typography>
     </Stack>
   );

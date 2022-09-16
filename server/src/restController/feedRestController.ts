@@ -19,7 +19,7 @@ feedRouter.post("/feeds", (req, res) => {
   feedService.create(req, res);
 });
 
-feedRouter.delete("/feeds/:pnum", (req, res) => {
+feedRouter.delete("/feeds/:fnum", (req, res) => {
   feedService.delete(req, res);
 });
 

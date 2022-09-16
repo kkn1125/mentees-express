@@ -27,13 +27,13 @@ export default {
   },
   updateByNum: (num: string, comment: Comments) => {
     const formData = getFormData(comment);
-    return axios.post(baseUrl + `/comments/${num}`, formData, {
+    return axios.put(baseUrl + `/comments/${num}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   },
   deleteByNum: (num: string) => {
-    return axios.post(baseUrl + `/comments/${num}`);
+    return axios.delete(baseUrl + `/comments/${num}`);
   },
 };

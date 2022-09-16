@@ -18,13 +18,13 @@ export default {
   },
   updateByNum: (num: string, feedback: Feedback) => {
     const formData = getFormData(feedback);
-    return axios.post(baseUrl + `/feedbacks/${num}`, formData, {
+    return axios.put(baseUrl + `/feedbacks/${num}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   },
   deleteByNum: (num: string) => {
-    return axios.post(baseUrl + `/feedbacks/${num}`);
+    return axios.delete(baseUrl + `/feedbacks/${num}`);
   },
 };

@@ -1,5 +1,5 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { IconButton, Stack, SvgIcon, Typography } from "@mui/material";
+import { IconButton, Stack, SvgIcon, Tooltip, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { api } from "../../apis";
 import { ProductContext } from "../../contexts/ProductProvider";
@@ -50,11 +50,13 @@ function LikeIcon({ pnum, type }: LikeIconProps) {
 
   return (
     <Stack direction='row' alignItems='center' sx={{ gap: 0.5 }}>
-      <IconButton onClick={handleCount}>
-        <SvgIcon fontSize='small' color={own ? "error" : "inherit"}>
-          <FavoriteIcon />
-        </SvgIcon>
-      </IconButton>
+      <Tooltip title='좋아요' placement='bottom'>
+        <IconButton onClick={handleCount}>
+          <SvgIcon fontSize='small' color={own ? "error" : "inherit"}>
+            <FavoriteIcon />
+          </SvgIcon>
+        </IconButton>
+      </Tooltip>
       <Typography variant='body2'>{count}</Typography>
     </Stack>
   );

@@ -18,13 +18,13 @@ export default {
   },
   updateByNum: (num: string, product: Product) => {
     const formData = getFormData(product);
-    return axios.post(baseUrl + `/products/${num}`, formData, {
+    return axios.put(baseUrl + `/products/${num}`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
   },
   deleteByNum: (num: string) => {
-    return axios.post(baseUrl + `/products/${num}`);
+    return axios.delete(baseUrl + `/products/${num}`);
   },
 };

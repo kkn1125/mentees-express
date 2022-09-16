@@ -14,8 +14,10 @@ import parse, {
   Element,
   HTMLReactParserOptions,
 } from "html-react-parser";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../apis";
+import CommentIcon from "../../components/atoms/CommentIcon";
 import CopyButton from "../../components/atoms/CopyButton";
 import LikeIcon from "../../components/atoms/LikeIcon";
 import ViewIcon from "../../components/atoms/ViewIcon";
@@ -23,6 +25,8 @@ import UserProfile from "../../components/molecules/UserProfile";
 import CommentItem from "../../components/organisms/CommentItem";
 import { CommentContext } from "../../contexts/CommentProvider";
 import { FeedbackContext } from "../../contexts/FeedbackProvider";
+import { UserContext } from "../../contexts/UserProvider";
+import useSnack from "../../hooks/useSnack";
 
 const options: HTMLReactParserOptions = {
   replace: (domNode: DOMNode) => {
@@ -39,35 +43,52 @@ const options: HTMLReactParserOptions = {
 function FeedbackDetail() {
   const navigate = useNavigate();
   const params = useParams<any>();
-  const feedbacks = useContext(FeedbackContext);
+  const users = useContext(UserContext);
   const comments = useContext(CommentContext);
+  const feedbacks = useContext(FeedbackContext);
+  const { successSnack, errorSnack } = useSnack();
 
   const feedback = useMemo<Feedback>(
     () => feedbacks.find((prod) => prod.num === Number(params.num)) || {},
     [feedbacks]
   );
 
+  const filteredList = comments.filter(
+    (comment) => comment.pnum === feedback.num && comment.type === "feedbacks"
+  );
+
   const feedbackCommentList = useMemo(
     () =>
-      comments.length > 0 ? (
-        comments
-          .filter((comment) => comment.pnum === feedback.num)
-          .map((comment) => (
-            <CommentItem
-              key={comment.num}
-              pnum={feedback.num}
-              cnum={comment.cnum}
-              order={comment.order}
-              layer={comment.layer}
-              type={comment.type}
-              comment={comment}
-            />
-          ))
+      filteredList.length > 0 ? (
+        filteredList.map((comment) => (
+          <CommentItem
+            key={comment.num}
+            pnum={feedback.num}
+            cnum={comment.cnum}
+            order={comment.order}
+            layer={comment.layer}
+            type={comment.type}
+            comment={comment}
+          />
+        ))
       ) : (
         <Alert severity='warning'>등록된 댓글이 없습니다.</Alert>
       ),
     [comments]
   );
+
+  const handleRemoveFeedback = () => {
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      api.feedbacks
+        .deleteByNum(String(feedback.num))
+        .then(() => {
+          successSnack("프로그램이 삭제 되었습니다.");
+        })
+        .catch((e) => {
+          errorSnack(e.message);
+        });
+    }
+  };
 
   return (
     <Container maxWidth='md' sx={{ pt: 10 }}>
@@ -89,6 +110,7 @@ function FeedbackDetail() {
         </Stack>
         <Stack direction='row' sx={{ gap: 3 }}>
           <Stack direction='row' sx={{ gap: 1 }}>
+            <CommentIcon count={filteredList.length} />
             <LikeIcon pnum={feedback.num} type='feeds' />
             <ViewIcon count={feedback.view} />
           </Stack>
@@ -110,8 +132,18 @@ function FeedbackDetail() {
       <Divider sx={{ my: 2 }} />
 
       <Stack direction='row' sx={{ gap: 2 }}>
-        <Chip label='test' />
-        <Chip label='test' />
+        <Stack direction='row' sx={{ gap: 2 }}>
+          <Chip label='test' />
+          <Chip label='test' />
+        </Stack>
+        {users.id === feedback.author && (
+          <Button
+            variant='contained'
+            color='error'
+            onClick={handleRemoveFeedback}>
+            삭제
+          </Button>
+        )}
       </Stack>
 
       <Stack
@@ -129,7 +161,7 @@ function FeedbackDetail() {
       </Stack>
 
       <Typography variant='h6' gutterBottom sx={{ mt: 5, fontWeight: 700 }}>
-        Comments [{(feedbackCommentList as unknown as Element[]).length}]
+        Comments [{filteredList.length}]
       </Typography>
       <Stack sx={{ gap: 3 }}>
         {/* 댓글 작성 폼 */}

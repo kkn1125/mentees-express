@@ -1,23 +1,52 @@
 import { Alert, Button, Container, Stack, Toolbar } from "@mui/material";
-import React, { useContext, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import PaginationController from "../../components/molecules/PaginationController";
 import ProgramCard from "../../components/molecules/ProgramCard";
+import { CommentContext } from "../../contexts/CommentProvider";
 import { ProductContext } from "../../contexts/ProductProvider";
+import { queryStringToObject } from "../../utils/tools";
+
+const limit = 5;
 
 function Programs() {
+  const locate = useLocation();
+  const comments = useContext(CommentContext);
   const products = useContext(ProductContext);
+  const [currentPage, setCurrentPage] = useState(1);
+
   const productList = useMemo(
     () =>
       products.length > 0 ? (
-        products.map((contents, idx) => (
-          <ProgramCard key={idx} contents={contents} idx={idx} />
-        ))
+        products
+          .slice(currentPage - 1, currentPage * limit)
+          .map((contents, idx) => (
+            <ProgramCard
+              key={idx}
+              contents={contents}
+              idx={idx}
+              comments={comments.filter(
+                (comment) =>
+                  comment.pnum === contents.num && comment.type === "products"
+              )}
+            />
+          ))
       ) : (
         <Alert severity='warning'>등록된 프로그램이 없습니다.</Alert>
       ),
-    [products]
+    [currentPage, products]
   );
+
+  useEffect(() => {
+    const query = queryStringToObject(locate.search);
+    const { page } = query;
+    if (page) {
+      setCurrentPage(page);
+    } else {
+      setCurrentPage(1);
+    }
+  }, [location.href]);
+
   return (
     <Container maxWidth={"lg"}>
       <Toolbar />
@@ -37,7 +66,7 @@ function Programs() {
         {productList}
       </Stack>
 
-      <PaginationController />
+      <PaginationController totalPages={Math.ceil(products.length / limit)} />
     </Container>
   );
 }

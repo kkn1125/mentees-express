@@ -1,7 +1,8 @@
-import { Box, Chip, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import { orElseImage } from "../../utils/tools";
+import CommentIcon from "../atoms/CommentIcon";
 import LikeIcon from "../atoms/LikeIcon";
 import TextOverflow from "../atoms/TextOverflow";
 import ViewIcon from "../atoms/ViewIcon";
@@ -9,9 +10,10 @@ import ViewIcon from "../atoms/ViewIcon";
 interface ProgramCard {
   contents: Product;
   idx: number;
+  comments: Comments[];
 }
 
-function ProgramCard({ contents, idx }: ProgramCard) {
+function ProgramCard({ contents, idx, comments }: ProgramCard) {
   const {
     num,
     tags,
@@ -83,6 +85,7 @@ function ProgramCard({ contents, idx }: ProgramCard) {
               {title}
             </Typography>
             <Stack direction='row' sx={{ gap: 2 }}>
+              <CommentIcon count={comments.length} />
               <LikeIcon pnum={num} />
               <ViewIcon count={view} />
             </Stack>

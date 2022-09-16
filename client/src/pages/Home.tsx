@@ -32,11 +32,20 @@ function Home() {
   const products = useContext(ProductContext);
   const feedbacks = useContext(FeedbackContext);
   const comments = useContext(CommentContext);
+
   const productList = useMemo(
     () =>
       products.length > 0 ? (
         products.map((contents, idx) => (
-          <ProgramCard key={idx} contents={contents} idx={idx} />
+          <ProgramCard
+            key={idx}
+            contents={contents}
+            idx={idx}
+            comments={comments.filter(
+              (comment) =>
+                comment.pnum === contents.num && comment.type === "products"
+            )}
+          />
         ))
       ) : (
         <Alert severity='warning' sx={{ flex: 1 }}>
@@ -53,8 +62,10 @@ function Home() {
             key={idx}
             contents={contents}
             idx={idx}
+            user={userList.find((user) => user.id === contents.author)}
             comments={comments.filter(
-              (comment) => comment.pnum === contents.num
+              (comment) =>
+                comment.pnum === contents.num && comment.type === "feedbacks"
             )}
           />
         ))

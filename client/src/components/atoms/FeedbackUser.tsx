@@ -3,15 +3,15 @@ import React, { Fragment } from "react";
 import { orElseImage } from "../../utils/tools";
 
 interface FeedbackUserProps {
-  cover: string;
   author: string;
+  user: User;
 }
 
-function FeedbackUser({ cover, author }: FeedbackUserProps) {
+function FeedbackUser({ author, user }: FeedbackUserProps) {
   return (
     <Fragment>
       <Avatar
-        src={orElseImage(cover)}
+        src={orElseImage(user ? user.cover : "")}
         alt='sample'
         sx={{
           width: 25,

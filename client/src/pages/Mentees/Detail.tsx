@@ -1,12 +1,15 @@
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import {
+  Alert,
   Box,
   Button,
   Chip,
   Container,
   Divider,
-  Paper,
+  IconButton,
   Stack,
-  TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import parse, {
@@ -16,10 +19,16 @@ import parse, {
 } from "html-react-parser";
 import React, { memo, useContext, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../../apis";
+import CommentIcon from "../../components/atoms/CommentIcon";
 import LikeIcon from "../../components/atoms/LikeIcon";
 import ViewIcon from "../../components/atoms/ViewIcon";
 import UserProfile from "../../components/molecules/UserProfile";
+import CommentItem from "../../components/organisms/CommentItem";
+import { CommentContext } from "../../contexts/CommentProvider";
 import { ProductContext } from "../../contexts/ProductProvider";
+import { UserContext } from "../../contexts/UserProvider";
+import useSnack from "../../hooks/useSnack";
 import { dateFormat, orElseImage } from "../../utils/tools";
 
 const options: HTMLReactParserOptions = {
@@ -38,7 +47,37 @@ function Detail() {
   const params = useParams<any>();
   const imgRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
+  const users = useContext(UserContext);
+  const comments = useContext(CommentContext);
   const products = useContext(ProductContext);
+  const { successSnack, errorSnack } = useSnack();
+
+  const product = useMemo<Product>(
+    () => products.find((prod) => prod.num === Number(params.num)) || {},
+    [products]
+  );
+  const filteredList = comments.filter(
+    (comment) => comment.pnum === product.num && comment.type === "products"
+  );
+  const productCommentList = useMemo(
+    () =>
+      filteredList.length > 0 ? (
+        filteredList.map((comment) => (
+          <CommentItem
+            key={comment.num}
+            pnum={product.num}
+            cnum={comment.cnum}
+            order={comment.order}
+            layer={comment.layer}
+            type={comment.type}
+            comment={comment}
+          />
+        ))
+      ) : (
+        <Alert severity='warning'>등록된 댓글이 없습니다.</Alert>
+      ),
+    [comments]
+  );
 
   useEffect(() => {
     if (isNaN(Number(params.num))) {
@@ -51,15 +90,23 @@ function Detail() {
     };
   }, []);
 
-  const product = useMemo<Product>(
-    () => products.find((prod) => prod.num === Number(params.num)) || {},
-    [products]
-  );
-
   const handleScroll = (e: Event) => {
     const heightGap = document.body.scrollHeight - window.innerHeight;
     if (imgRef.current) {
       imgRef.current.style.top = `${(window.scrollY / heightGap) * 100}%`;
+    }
+  };
+
+  const handleRemoveProduct = () => {
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      api.products
+        .deleteByNum(String(product.num))
+        .then(() => {
+          successSnack("프로그램이 삭제 되었습니다.");
+        })
+        .catch((e) => {
+          errorSnack(e.message);
+        });
     }
   };
 
@@ -99,10 +146,13 @@ function Detail() {
           </Typography>
           <Stack direction='row' sx={{ gap: 3 }}>
             <Stack direction='row' sx={{ gap: 1 }}>
+              <CommentIcon count={filteredList.length} />
               <LikeIcon pnum={product.num} />
               <ViewIcon count={product.view} />
             </Stack>
-            <Chip color='primary' label={product.type} />
+            <Tooltip title='프로그램 타입' placement='bottom'>
+              <Chip color='primary' label={product.type} />
+            </Tooltip>
           </Stack>
         </Stack>
 
@@ -149,9 +199,18 @@ function Detail() {
           </Stack>
 
           <Stack direction='row' sx={{ gap: 2 }}>
-            <Button color='success' variant='contained'>
-              신청
-            </Button>
+            <Tooltip title='이 프로그램 신청하기' placement='bottom'>
+              <IconButton color='success'>
+                <CheckCircleOutlineIcon />
+              </IconButton>
+            </Tooltip>
+            {users.id === product.id && (
+              <Tooltip title='삭제하기' placement='bottom'>
+                <IconButton color='error' onClick={handleRemoveProduct}>
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Tooltip>
+            )}
             {/* <Button color='error' variant='contained'>
               찜하기
             </Button> */}
@@ -172,24 +231,21 @@ function Detail() {
           </Button>
         </Stack>
 
-        <Typography variant='h6' gutterBottom sx={{ mt: 5, fontWeight: 700 }}>
-          Comments [{}]
-        </Typography>
-
-        <Box component={Paper} elevation={5} sx={{ p: 3 }}>
-          <UserProfile
-            nickname='kimson'
-            src='https://avatars.githubusercontent.com/u/71887242?v=4'
-            time={new Date()}
+        <Stack sx={{ gap: 3 }}>
+          {/* 댓글 작성 폼 */}
+          <CommentItem
+            counts={filteredList.length}
+            pnum={product.num}
+            cnum={0}
+            order={0}
+            layer={0}
+            type={"products"}
           />
-
-          <Stack sx={{ gap: 1, mt: 2 }} alignItems='flex-end'>
-            <Box>
-              <Button variant='outlined'>등록</Button>
-            </Box>
-            <TextField fullWidth multiline rows={5} />
+          <Stack sx={{ gap: 2 }}>
+            {/* 댓글 리스트 */}
+            {productCommentList}
           </Stack>
-        </Box>
+        </Stack>
       </Container>
     </Box>
   );

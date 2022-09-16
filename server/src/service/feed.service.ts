@@ -103,13 +103,13 @@ Feed.create = (req, res) => {
 };
 
 Feed.delete = (req, res) => {
-  const { pnum } = req.params;
+  const { fnum } = req.params;
   const { mnum } = req.body;
   console.log(req.params);
   console.log(req.body);
   sql.query(
-    "DELETE FROM feed WHERE pnum=? AND mnum=?",
-    [pnum, mnum],
+    "DELETE FROM feed WHERE fnum=? AND mnum=?",
+    [fnum, mnum],
     (error: any, rows: any) => {
       try {
         if (error) {
