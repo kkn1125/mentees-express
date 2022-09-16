@@ -93,8 +93,9 @@ declare interface Comments {
   layer?: number | null;
   author?: string | null;
   content?: string | null;
-  visible?: boolean | null;
+  visible?: number | null;
   regdate?: Date | null;
+  updates?: Date | null;
 }
 
 declare type UserActionType = "user/save" | "user/reset";

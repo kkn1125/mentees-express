@@ -1,7 +1,9 @@
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import {
+  Box,
   Chip,
   Divider,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
@@ -24,9 +26,10 @@ interface FeedbackCardProps {
   contents: any;
   idx: number;
   wide: boolean;
+  comments: Comments[];
 }
 
-const WideCard = ({ contents, idx }) => {
+const WideCard = ({ contents, idx, comments }) => {
   const { num, view, title, content, author, tags, regdate, updates } =
     contents;
 
@@ -81,8 +84,14 @@ const WideCard = ({ contents, idx }) => {
             }}>
             {title}
           </Typography>
-          <Stack direction='row' sx={{ gap: 2 }}>
-            <LikeIcon pnum={num} type='feed' />
+          <Stack direction='row' sx={{ gap: 1 }}>
+            <Stack direction='row' alignItems='center'>
+              <IconButton>
+                <SmsOutlinedIcon />
+              </IconButton>
+              {comments.length}
+            </Stack>
+            <LikeIcon pnum={num} type='feeds' />
             <ViewIcon count={view} />
           </Stack>
         </Stack>
@@ -91,7 +100,12 @@ const WideCard = ({ contents, idx }) => {
           {author}
         </Typography>
 
-        <TextOverflow>{content}</TextOverflow>
+        <TextOverflow>
+          {
+            new DOMParser().parseFromString(content, "text/html").body
+              .textContent
+          }
+        </TextOverflow>
         <Stack direction='row' sx={{ gap: 1 }}>
           {tags.split("_").map((tag, ids) => (
             <Chip key={ids} label={tag} />
@@ -102,7 +116,7 @@ const WideCard = ({ contents, idx }) => {
   );
 };
 
-const ShortCard = ({ contents, idx }) => {
+const ShortCard = ({ contents, idx, comments }) => {
   const { num, view, title, content, cover, author, tags, regdate, updates } =
     contents;
 
@@ -128,8 +142,14 @@ const ShortCard = ({ contents, idx }) => {
         <ListItemIcon>
           <SmsOutlinedIcon />
         </ListItemIcon>
-        <Stack direction='row' sx={{ gap: 2 }}>
-          <LikeIcon pnum={num} type='feed' />
+        <Stack direction='row' sx={{ gap: 1 }}>
+          <Stack direction='row' alignItems='center'>
+            <IconButton>
+              <SmsOutlinedIcon />
+            </IconButton>
+            {comments.length}
+          </Stack>
+          <LikeIcon pnum={num} type='feeds' />
           <ViewIcon count={view} />
         </Stack>
       </Stack>
@@ -137,7 +157,14 @@ const ShortCard = ({ contents, idx }) => {
         <ListItemButton component={Link} to={`/mentees/feedback/${num}`}>
           <ListItemText
             primary={title}
-            secondary={<TextOverflow children={content} />}
+            secondary={
+              <TextOverflow
+                children={
+                  new DOMParser().parseFromString(content, "text/html").body
+                    .textContent
+                }
+              />
+            }
           />
         </ListItemButton>
       </ListItem>
@@ -173,13 +200,13 @@ const ShortCard = ({ contents, idx }) => {
   );
 };
 
-function FeedbackCard({ contents, idx, wide }: FeedbackCardProps) {
+function FeedbackCard({ contents, idx, wide, comments }: FeedbackCardProps) {
   const navigate = useNavigate();
 
   return wide ? (
-    <WideCard contents={contents} idx={idx} />
+    <WideCard contents={contents} idx={idx} comments={comments} />
   ) : (
-    <ShortCard contents={contents} idx={idx} />
+    <ShortCard contents={contents} idx={idx} comments={comments} />
   );
 }
 

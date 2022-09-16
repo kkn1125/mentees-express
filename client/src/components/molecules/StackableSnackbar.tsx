@@ -1,4 +1,12 @@
-import { Alert, AlertColor, Fade, Grow, Slide, Snackbar } from "@mui/material";
+import {
+  Alert,
+  AlertColor,
+  Fade,
+  Grow,
+  Paper,
+  Slide,
+  Snackbar,
+} from "@mui/material";
 import React, { useContext, useState } from "react";
 import {
   SnackDispatchContext,
@@ -41,9 +49,11 @@ function StackableSnackbar({ id, message, color }: StackableSnackbarProps) {
         position: "relative",
       }}
       children={
-        <Alert onClose={handleClose} severity={color} sx={{ width: "100%" }}>
-          {message}
-        </Alert>
+        <Paper elevation={3}>
+          <Alert onClose={handleClose} severity={color} sx={{ width: "100%" }}>
+            {message}
+          </Alert>
+        </Paper>
       }
     />
   );

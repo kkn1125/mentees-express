@@ -3,17 +3,27 @@ import React, { useContext, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import FeedbackCard from "../../components/molecules/FeedbackCard";
 import PaginationController from "../../components/molecules/PaginationController";
+import { CommentContext } from "../../contexts/CommentProvider";
 import { FeedbackContext } from "../../contexts/FeedbackProvider";
 import { dummyFeedbacks } from "../../utils/tools";
 
 function Feedback() {
   const feedbacks = useContext(FeedbackContext);
+  const comments = useContext(CommentContext);
 
   const feedbackList = useMemo(
     () =>
       feedbacks.length > 0 ? (
         feedbacks.map((contents, idx) => (
-          <FeedbackCard key={idx} contents={contents} idx={idx} wide />
+          <FeedbackCard
+            key={idx}
+            contents={contents}
+            idx={idx}
+            wide
+            comments={comments.filter(
+              (comment) => comment.pnum === contents.num
+            )}
+          />
         ))
       ) : (
         <Alert severity='warning'>등록된 피드백이 없습니다.</Alert>

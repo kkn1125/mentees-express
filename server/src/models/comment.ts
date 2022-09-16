@@ -1,4 +1,5 @@
 class Comment {
+  static getLastOrderNumber: (req: any, res: any) => void;
   static findAll: (req: any, res: any) => void;
   static findOne: (req: any, res: any) => void;
   static findByPnum: (req: any, res: any) => void;

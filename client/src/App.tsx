@@ -44,7 +44,7 @@ const ProtectedRoute = ({ children }) => {
   }, [users.num]);
 
   if (protect) {
-    return <Navigate to={"../"} replace />;
+    return <Navigate to={"./../"} replace />;
   } else if (error) {
     return <NotFound />;
   }
@@ -96,7 +96,14 @@ export default function App() {
             }
           />
           <Route path='feedback' element={<Feedback />} />
-          <Route path='feedback/form' element={<WriteForm type='feedback' />} />
+          <Route
+            path='feedback/form'
+            element={
+              <ProtectedRoute>
+                <WriteForm type='feedbacks' />
+              </ProtectedRoute>
+            }
+          />
           <Route path='feedback/:num' element={<FeedbackDetail />} />
           <Route path=':num' element={<Detail />} />
           <Route

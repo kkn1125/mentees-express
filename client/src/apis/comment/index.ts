@@ -2,6 +2,9 @@ import axios from "axios";
 import { baseUrl, getFormData } from "../../utils/tools";
 
 export default {
+  getLastOrderNumber: (cnum: number) => {
+    return axios.get(baseUrl + `/comments/lastorder/${cnum}`);
+  },
   findAll: () => {
     return axios.get(baseUrl + "/comments");
   },
@@ -14,7 +17,7 @@ export default {
   findByFnum: (fnum: string) => {
     return axios.get(baseUrl + `/comments/fnum/${fnum}`);
   },
-  create: (comment: Product) => {
+  create: (comment: Comments) => {
     const formData = getFormData(comment);
     return axios.post(baseUrl + `/comments`, formData, {
       headers: {
@@ -22,7 +25,7 @@ export default {
       },
     });
   },
-  updateByNum: (num: string, comment: Product) => {
+  updateByNum: (num: string, comment: Comments) => {
     const formData = getFormData(comment);
     return axios.post(baseUrl + `/comments/${num}`, formData, {
       headers: {

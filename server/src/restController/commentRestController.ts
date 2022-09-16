@@ -3,6 +3,10 @@ import commentService from "../service/comment.service.js";
 
 const commentRouter = router.Router();
 
+commentRouter.get("/comments/lastorder/:cnum", (req, res) => {
+  commentService.getLastOrderNumber(req, res);
+});
+
 commentRouter.get("/comments", (req, res) => {
   commentService.findAll(req, res);
 });

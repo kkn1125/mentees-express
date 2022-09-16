@@ -5,7 +5,7 @@ import { dateFormat, orElseImage } from "../../utils/tools";
 interface UserProfileProps {
   nickname: string;
   src: string;
-  time: Date;
+  time?: Date;
 }
 
 function UserProfile({ nickname, src, time }: UserProfileProps) {
@@ -16,9 +16,11 @@ function UserProfile({ nickname, src, time }: UserProfileProps) {
         <Typography variant='body1' sx={{ fontWeight: 700 }}>
           {nickname}
         </Typography>
-        <Typography variant='body2'>
-          {dateFormat(time, "yyyy. MM. dd HH:mm")}
-        </Typography>
+        {time && (
+          <Typography variant='body2'>
+            {dateFormat(time, "yyyy. MM. dd HH:mm")}
+          </Typography>
+        )}
       </Stack>
     </Stack>
   );

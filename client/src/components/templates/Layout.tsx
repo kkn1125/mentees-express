@@ -6,6 +6,10 @@ import { useCookies } from "react-cookie";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../../apis";
 import {
+  CommentDispatchContext,
+  commentsLoad,
+} from "../../contexts/CommentProvider";
+import {
   FeedbackDispatchContext,
   feedbacksLoad,
 } from "../../contexts/FeedbackProvider";
@@ -36,6 +40,7 @@ function Layout() {
   const [cookies, setCookie] = useCookies(["token"]);
   const productDispatch = useContext(ProductDispatchContext);
   const feedbackDispatch = useContext(FeedbackDispatchContext);
+  const commentDispatch = useContext(CommentDispatchContext);
 
   useEffect(() => {
     AOS.init();
@@ -49,9 +54,14 @@ function Layout() {
       const feedbacks = JSON.parse(e.data);
       feedbackDispatch(feedbacksLoad(feedbacks));
     };
+    const commentBroadcast = (e) => {
+      const comments = JSON.parse(e.data);
+      commentDispatch(commentsLoad(comments));
+    };
 
     sse.addEventListener("product", productBroadcast);
     sse.addEventListener("feedback", feedbackBroadcast);
+    sse.addEventListener("comment", commentBroadcast);
 
     const queryMap = queryStringToObject(locate.search);
     const kakaoLogin = async () => {
@@ -73,6 +83,8 @@ function Layout() {
 
     return () => {
       sse.removeEventListener("product", productBroadcast);
+      sse.removeEventListener("feedback", productBroadcast);
+      sse.removeEventListener("comment", commentBroadcast);
     };
   }, []);
 

@@ -18,6 +18,14 @@ const sse = async (req: any, res: any) => {
   sql.query("SELECT * FROM feedback", (err, rows) => {
     session.push(rows, "feedback");
   });
+  sql.query(
+    "SELECT * FROM comment order by `cnum` desc, `layer` asc, `order` desc",
+    (err, rows) => {
+      session.push(rows, "comment");
+    }
+  );
+
+  // broadcast events
   setInterval(() => {
     sql.query("SELECT * FROM product", (err, rows) => {
       session.push(rows, "product");
@@ -25,6 +33,12 @@ const sse = async (req: any, res: any) => {
     sql.query("SELECT * FROM feedback", (err, rows) => {
       session.push(rows, "feedback");
     });
+    sql.query(
+      "SELECT * FROM comment order by `cnum` desc, `layer` asc, `order` desc",
+      (err, rows) => {
+        session.push(rows, "comment");
+      }
+    );
   }, 1000);
 };
 

@@ -8,7 +8,7 @@ import useSnack from "../../hooks/useSnack";
 
 interface LikeIconProps {
   pnum?: number;
-  type: "likes" | "feed";
+  type: "likes" | "feeds";
 }
 
 function LikeIcon({ pnum, type }: LikeIconProps) {
@@ -21,7 +21,7 @@ function LikeIcon({ pnum, type }: LikeIconProps) {
   useEffect(() => {
     // api 사용해야 함
     if (pnum) {
-      api[type][type === "feed" ? "findByFnum" : "findByPnum"](pnum).then(
+      api[type][type === "feeds" ? "findByFnum" : "findByPnum"](pnum).then(
         (result) => {
           const { data } = result;
           const { payload } = data;

@@ -39,14 +39,16 @@ import {
   FILE_TYPE_REGEXP,
 } from "../../utils/tools";
 
+type Type = "products" | "feedbacks";
+
 interface WriteFormprops {
   mode: "create" | "update";
-  type: "product" | "feedback";
+  type: Type;
 }
 
 interface FormProps {
   product?: any;
-  type: "product" | "feedback";
+  type: Type;
 }
 
 interface DayjsSet {
@@ -55,46 +57,48 @@ interface DayjsSet {
   until: Dayjs | null;
 }
 
-const validationSchema = yup.object({
-  author: yup.string(),
-  id: yup.string(),
-  title: yup.string().required("제목은 필수항목입니다."),
-  content: yup.string(),
-  address: yup.string().required("필수항목 입니다."),
-  start: yup.string().required("필수항목 입니다."),
-  end: yup.string().required("필수항목 입니다."),
-  until: yup.string().required("필수항목 입니다."),
-  type: yup.string().required("필수항목 입니다."),
-  capacity: yup.number().required("참여 인원은 필수 항목입니다."),
-  cover: yup.lazy((value) => {
-    switch (typeof value) {
-      case "object":
-        return yup
-          .object({
-            type: yup.string().matches(FILE_TYPE_REGEXP, {
-              exclideEmptyString: false,
-              message: FILE_TYPE_ERROR,
-            }),
-            name: yup.string().matches(FILE_NAME_REGEXP, {
-              exclideEmptyString: false,
-              message: FILE_TYPE_ERROR,
-            }),
-            size: yup.number(),
-            lastModified: yup.number(),
-            lastModifiedDate: yup.string(),
-            webkitRelativePath: yup.string(),
-            insertTime: yup.number(),
-            insertDate: yup.string(),
-          })
-          .nullable();
-      case "string":
-        return yup.string().required("필수입력");
-      default:
-        return yup.string();
-    }
-  }),
-  tags: yup.string().notRequired(),
-});
+const validationSchema = (type: Type) =>
+  yup.object({
+    [type === "feedbacks" ? "author" : "id"]: yup.string(),
+    title: yup.string().required("제목은 필수항목입니다."),
+    content: yup.string(),
+    tags: yup.string().notRequired(),
+    ...(type !== "feedbacks" && {
+      address: yup.string().required("필수항목 입니다."),
+      start: yup.string().required("필수항목 입니다."),
+      end: yup.string().required("필수항목 입니다."),
+      until: yup.string().required("필수항목 입니다."),
+      type: yup.string().required("필수항목 입니다."),
+      capacity: yup.number().required("참여 인원은 필수 항목입니다."),
+      cover: yup.lazy((value) => {
+        switch (typeof value) {
+          case "object":
+            return yup
+              .object({
+                type: yup.string().matches(FILE_TYPE_REGEXP, {
+                  exclideEmptyString: false,
+                  message: FILE_TYPE_ERROR,
+                }),
+                name: yup.string().matches(FILE_NAME_REGEXP, {
+                  exclideEmptyString: false,
+                  message: FILE_TYPE_ERROR,
+                }),
+                size: yup.number(),
+                lastModified: yup.number(),
+                lastModifiedDate: yup.string(),
+                webkitRelativePath: yup.string(),
+                insertTime: yup.number(),
+                insertDate: yup.string(),
+              })
+              .nullable();
+          case "string":
+            return yup.string().required("필수입력");
+          default:
+            return yup.string();
+        }
+      }),
+    }),
+  });
 
 const CreateForm = ({ product, type }: FormProps) => {
   const theme = useTheme();
@@ -106,12 +110,12 @@ const CreateForm = ({ product, type }: FormProps) => {
   const { successSnack, warningSnack, errorSnack } = useSnack();
   const formik = useFormik({
     initialValues: {
-      [type === "feedback" ? "author" : "id"]: "",
+      [type === "feedbacks" ? "author" : "id"]: "",
       title: "",
       content: "",
-      cover: null,
       tags: "",
-      ...(type !== "feedback" && {
+      ...(type !== "feedbacks" && {
+        cover: null,
         address: "",
         start: "",
         end: "",
@@ -120,7 +124,7 @@ const CreateForm = ({ product, type }: FormProps) => {
         capacity: 0,
       }),
     },
-    validationSchema: validationSchema,
+    validationSchema: validationSchema(type),
     onSubmit: (values) => {
       if (editor.current.getText().length === 0) {
         errorSnack("내용은 필수항목입니다.");
@@ -129,24 +133,24 @@ const CreateForm = ({ product, type }: FormProps) => {
       formik.values.content = editor.current.getContents(true);
       const { title, content } = values;
       if (Boolean(title) && Boolean(content)) {
-        // console.log(values);
-        api.products
+        api[type]
           .create(values)
           .then((result) => {
             const { data } = result;
             // console.log(data);
             successSnack("프로그램이 등록 되었습니다.");
-            navigate("../");
+            navigate("./../");
           })
           .catch((e) => {
-            errorSnack(e.data.message);
+            const { response } = e;
+            errorSnack(response.data.message);
           });
       }
     },
   });
 
   useEffect(() => {
-    formik.values[type === "feedback" ? "author" : "id"] = users.id;
+    formik.values[type === "feedbacks" ? "author" : "id"] = users.id;
   }, [users]);
 
   const [dates, setDates] = useState<DayjsSet>({
@@ -210,16 +214,6 @@ const CreateForm = ({ product, type }: FormProps) => {
     editor.current = sunEditor;
   };
 
-  // const handleContentChange = (e: KeyboardEvent) => {
-  //   const contents = (e.target as HTMLElement).textContent;
-  //   if (contents.length > 0) {
-  //     console.debug("content error 삭제");
-  //     delete formik.errors["content"];
-  //   }
-  //   console.log(formik.errors)
-  //   formik.values.content = (e.target as HTMLElement).innerHTML;
-  // };
-
   return (
     <Container maxWidth='lg'>
       <Stack
@@ -237,7 +231,7 @@ const CreateForm = ({ product, type }: FormProps) => {
             },
             gap: 3,
           }}>
-          {type !== "feedback" && (
+          {type !== "feedbacks" && (
             <Fragment>
               {/* 프로그램 시작 */}
               <PointDatePicker
@@ -288,7 +282,7 @@ const CreateForm = ({ product, type }: FormProps) => {
             handleTagChange={handleTagChange}
           />
 
-          {type !== "feedback" && (
+          {type !== "feedbacks" && (
             <Fragment>
               {/* 위치/장소 지정 */}
               <TextField
@@ -343,6 +337,7 @@ const CreateForm = ({ product, type }: FormProps) => {
             </Fragment>
           )}
         </Stack>
+
         <Divider
           orientation={
             useMediaQuery(theme.breakpoints.up("md"))
@@ -351,6 +346,7 @@ const CreateForm = ({ product, type }: FormProps) => {
           }
           flexItem
         />
+
         <Stack
           component='form'
           onSubmit={formik.handleSubmit}
@@ -488,7 +484,7 @@ function WriteForm({ mode, type }: WriteFormprops) {
 
 WriteForm.defaultProps = {
   mode: "create",
-  type: "product",
+  type: "products",
 };
 
 export default WriteForm;

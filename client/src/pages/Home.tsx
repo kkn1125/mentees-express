@@ -8,6 +8,7 @@ import ProgramCard from "../components/molecules/ProgramCard";
 import SectionTitle from "../components/molecules/SectionTitle";
 import SkillSet from "../components/molecules/SkillSet";
 import UserInformation from "../components/organisms/UserInformation";
+import { CommentContext } from "../contexts/CommentProvider";
 import { FeedbackContext } from "../contexts/FeedbackProvider";
 import { ProductContext } from "../contexts/ProductProvider";
 import { dummyFeedbacks } from "../utils/tools";
@@ -30,6 +31,7 @@ function Home() {
   const [userList, setUserList] = useState([]);
   const products = useContext(ProductContext);
   const feedbacks = useContext(FeedbackContext);
+  const comments = useContext(CommentContext);
   const productList = useMemo(
     () =>
       products.length > 0 ? (
@@ -47,7 +49,14 @@ function Home() {
     () =>
       feedbacks.length > 0 ? (
         feedbacks.map((contents, idx) => (
-          <FeedbackCard key={idx} contents={contents} idx={idx} />
+          <FeedbackCard
+            key={idx}
+            contents={contents}
+            idx={idx}
+            comments={comments.filter(
+              (comment) => comment.pnum === contents.num
+            )}
+          />
         ))
       ) : (
         <Alert severity='warning' sx={{ flex: 1 }}>
