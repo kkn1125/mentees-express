@@ -52,8 +52,8 @@ export const throwException = (
   ok: boolean = true
 ): never => {
   throw new CustomException({
-    message: message,
-    status: status,
-    ok: ok,
+    message,
+    status,
+    ok,
   });
 };

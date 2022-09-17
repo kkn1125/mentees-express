@@ -2,6 +2,26 @@
 
 이 저장소는 기존 Mentees Project를 node.js express + react (typescript)로 마이그레이션 하기 위해 생성되었습니다.
 
+## 실행방법
+
+> 서버와 클라이언트, root 디렉토리 모두 node module을 사용하므로 세 가지 디렉토리 모두 설치해주어야 합니다.
+
+저장소를 포크하거나 다운로드 합니다. 그리고 필요한 의존을 설치합니다.
+
+```bash
+npm install
+# or
+yarn install
+```
+
+server와 client 폴더가 있는 `root` 디렉토리에서 서버를 실행합니다.
+
+```bash
+yarn start
+yarn build # build
+yarn mock # build된 프로젝트 실행
+```
+
 ## 개발환경
 
 ### 이전 개발 환경

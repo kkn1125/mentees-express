@@ -149,7 +149,7 @@ Comment.create = (req, res) => {
   let lastIndexCopy = "";
   if (req.body.cnum === "0") {
     lastIndexCopy = "cnum=last_insert_id() + 1,";
-    delete req.body["cnum"];
+    delete req.body.cnum;
   }
   sql.query(
     "INSERT INTO comment SET " + lastIndexCopy + " ?",
