@@ -107,7 +107,7 @@ const WideCard = ({ contents, idx, comments }) => {
         </TextOverflow>
         <Stack direction='row' sx={{ gap: 1 }}>
           {tags.split("_").map((tag, ids) => (
-            <Chip key={ids} label={tag} />
+            <Chip key={ids} label={tag} color='warning' />
           ))}
         </Stack>
       </Stack>

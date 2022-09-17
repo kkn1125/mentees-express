@@ -1,12 +1,13 @@
 import TagIcon from "@mui/icons-material/Tag";
 import { Autocomplete, Chip, TextField } from "@mui/material";
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { Fragment, memo, useEffect, useState } from "react";
 import useSnack from "../../hooks/useSnack";
 
 interface TagFieldProps {
   autoCompleteList: React.MutableRefObject<string[]>;
   id: string;
   name: string;
+  values: string[];
   handleTagChange: (tags: string[]) => void;
 }
 
@@ -14,6 +15,7 @@ function TagField({
   autoCompleteList,
   id,
   name,
+  values,
   handleTagChange,
 }: TagFieldProps) {
   const { warningSnack } = useSnack();
@@ -51,11 +53,40 @@ function TagField({
   }, [autoCompleteList.current]);
 
   return (
+    <Fragment>
+      {values.length > 0 && (
+        <AutocompleteWithValues
+          id={id}
+          name={name}
+          values={values}
+          customList={customList}
+          handleKyeboard={handleKyeboard}
+          autoCompleteList={autoCompleteList}
+        />
+      )}
+      {values.length === 0 && (
+        <AutocompleteWithValues
+          id={id}
+          name={name}
+          customList={customList}
+          handleKyeboard={handleKyeboard}
+          autoCompleteList={autoCompleteList}
+        />
+      )}
+    </Fragment>
+  );
+}
+
+const AutocompleteWithValues = (props) => {
+  const { values, id, customList, handleKyeboard, autoCompleteList, name } =
+    props;
+  return (
     <Autocomplete
       multiple
       id={id}
       options={customList.map((option) => option.title)}
       freeSolo
+      {...(values && { defaultValue: values })}
       onKeyUp={handleKyeboard}
       renderTags={(value: readonly string[], getTagProps) => {
         autoCompleteList.current = value.slice(0);
@@ -81,6 +112,6 @@ function TagField({
       )}
     />
   );
-}
+};
 
 export default memo(TagField);

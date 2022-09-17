@@ -27,12 +27,16 @@ function SelectBox({ name, label, formik }: SelectBoxProps) {
         labelId={name}
         id={name}
         name={name}
-        value={formik.values[name]}
+        value={formik.values[name] || ""}
         label={label}
         onChange={(e: SelectChangeEvent) => {
           formik.handleChange(e as React.ChangeEvent<any>);
           handleSelectChange(e);
         }}>
+        <MenuItem value={""}>
+          <em>-</em>
+        </MenuItem>
+
         {typeList.map((type, idx) => (
           <MenuItem key={type + idx} value={type}>
             {capitalize(type)}

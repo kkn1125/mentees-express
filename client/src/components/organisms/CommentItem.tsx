@@ -1,5 +1,6 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import SubdirectoryArrowRightOutlinedIcon from "@mui/icons-material/SubdirectoryArrowRightOutlined";
 import {
   Box,
   Button,
@@ -13,13 +14,12 @@ import {
   Typography,
 } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import * as yup from "yup";
 import { api } from "../../apis";
 import { UserContext } from "../../contexts/UserProvider";
 import useSnack from "../../hooks/useSnack";
 import UserProfile from "../molecules/UserProfile";
-import SubdirectoryArrowRightOutlinedIcon from "@mui/icons-material/SubdirectoryArrowRightOutlined";
 
 type Type = "products" | "feedbacks";
 
@@ -54,6 +54,7 @@ function CommentItem({
   comment,
 }: CommentItemProps) {
   const users = useContext(UserContext);
+  const [owner, setOwner] = useState(null);
   const { successSnack, warningSnack } = useSnack();
   const [writeMode, setWriteMode] = useState(false);
   const formik = useFormik({
@@ -105,6 +106,20 @@ function CommentItem({
       formik.values.layer = layer;
       formik.values.type = type;
     }
+
+    if (comment) {
+      api.members
+        .findById(comment.author)
+        .then((result) => {
+          const { data } = result;
+          const { payload } = data;
+          setOwner(payload[0]);
+        })
+        .catch((e) => {
+          const { response } = e;
+          warningSnack(response.data.message);
+        });
+    }
   }, [users]);
 
   const handleWriteMode = () => {
@@ -142,7 +157,7 @@ function CommentItem({
         <SvgIcon
           sx={{
             position: "absolute",
-            top: "5%",
+            top: "1rem",
             right: "101%",
             fontSize: (theme) => theme.typography.pxToRem(30),
             fontWeight: 700,
@@ -157,18 +172,20 @@ function CommentItem({
           sx={{ flex: 1, mb: 3 }}>
           {comment && (
             <UserProfile
-              nickname='kimson'
-              src='https://avatars.githubusercontent.com/u/71887242?v=4'
+              nickname={comment.author}
+              src={owner?.cover || ""}
               time={new Date(comment.regdate)}
             />
           )}
-          <Stack direction='row' sx={{ gap: 1, ...(counts && { flex: 1 }) }}>
+          <Stack direction='row' alignItems='center' sx={{ gap: 1, flex: 1 }}>
             <Stack
               direction={"row"}
-              justifyContent='space-between'
+              justifyContent={
+                counts !== undefined ? "space-between" : "flex-end"
+              }
               alignItems='center'
               sx={{ flex: 1 }}>
-              {counts && (
+              {counts !== undefined && (
                 <Typography
                   variant='h6'
                   component='div'
@@ -176,26 +193,28 @@ function CommentItem({
                   {counts} comment{counts > 1 && "s"}
                 </Typography>
               )}
-              <Box>
-                <SwitchButton
-                  isIconButton={Boolean(comment)}
-                  color={!comment ? "primary" : "warning"}
-                  onClick={handleWriteMode}
-                  variant='contained'
-                  sx={{ float: "right" }}>
-                  {comment ? <RateReviewOutlinedIcon /> : "댓글 작성"}
-                </SwitchButton>
-              </Box>
+              <Stack direction='row' sx={{ gap: 1 }}>
+                {comment && users.id === comment.author && (
+                  <Fragment>
+                    <SwitchButton
+                      isIconButton={Boolean(comment)}
+                      color={!comment ? "primary" : "warning"}
+                      onClick={handleWriteMode}
+                      variant='contained'
+                      sx={{ float: "right" }}>
+                      {comment ? <RateReviewOutlinedIcon /> : "댓글 작성"}
+                    </SwitchButton>
+                    <Box>
+                      <Tooltip title='삭제하기' placement='bottom'>
+                        <IconButton color='error' onClick={handleRemoveComment}>
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+                  </Fragment>
+                )}
+              </Stack>
             </Stack>
-            {comment && users.id === comment.author && (
-              <Box>
-                <Tooltip title='삭제하기' placement='bottom'>
-                  <IconButton color='error' onClick={handleRemoveComment}>
-                    <DeleteForeverIcon />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            )}
           </Stack>
         </Stack>
         {comment && <Typography gutterBottom>{comment.content}</Typography>}
@@ -210,10 +229,7 @@ function CommentItem({
                   direction='row'
                   justifyContent='space-between'
                   sx={{ flex: 1 }}>
-                  <UserProfile
-                    nickname='kimson'
-                    src='https://avatars.githubusercontent.com/u/71887242?v=4'
-                  />
+                  <UserProfile nickname='kimson' src={users.cover || ""} />
                   <Box>
                     <Button variant='outlined' type='submit'>
                       등록

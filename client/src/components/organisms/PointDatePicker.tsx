@@ -1,5 +1,5 @@
-import React, { memo, useState } from "react";
-import { Dayjs } from "dayjs";
+import React, { memo, useEffect, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -31,6 +31,10 @@ function PointDatePicker({
   dates,
 }: PointDatePickerProps) {
   const [value, setValue] = useState<Dayjs | null>(null);
+
+  useEffect(() => {
+    setValue(dates[name]);
+  }, [dates]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>

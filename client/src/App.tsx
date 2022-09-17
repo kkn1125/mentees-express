@@ -1,15 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import {
-  IndexRouteProps,
-  LayoutRouteProps,
-  Navigate,
-  PathRouteProps,
-  Route,
-  Routes,
-  useLocation,
-  useParams,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import Layout from "./components/templates/Layout";
 import { UserContext } from "./contexts/UserProvider";
 import useSnack from "./hooks/useSnack";
@@ -101,6 +92,14 @@ export default function App() {
             element={
               <ProtectedRoute>
                 <WriteForm type='feedbacks' />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path='feedback/form/:num'
+            element={
+              <ProtectedRoute>
+                <WriteForm type='feedbacks' mode='update' />
               </ProtectedRoute>
             }
           />

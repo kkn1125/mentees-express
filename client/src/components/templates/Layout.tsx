@@ -3,7 +3,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import React, { memo, useContext, useEffect } from "react";
 import { useCookies } from "react-cookie";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { api } from "../../apis";
 import {
   CommentDispatchContext,
@@ -23,14 +23,14 @@ import {
   UserDispatchContext,
   userSave,
 } from "../../contexts/UserProvider";
+import useQuery from "../../hooks/useQuery";
 import useSnack from "../../hooks/useSnack";
-import { queryStringToObject, serverBaseUrl } from "../../utils/tools";
+import { serverBaseUrl } from "../../utils/tools";
 import StackableSnackbar from "../molecules/StackableSnackbar";
 import Footer from "./Footer";
 import Header from "./Header";
 
 function Layout() {
-  const locate = useLocation();
   const navigate = useNavigate();
   const { errorSnack } = useSnack();
   const snacks = useContext(SnackContext);
@@ -41,6 +41,7 @@ function Layout() {
   const productDispatch = useContext(ProductDispatchContext);
   const feedbackDispatch = useContext(FeedbackDispatchContext);
   const commentDispatch = useContext(CommentDispatchContext);
+  const query = useQuery();
 
   useEffect(() => {
     AOS.init();
@@ -63,9 +64,8 @@ function Layout() {
     sse.addEventListener("feedback", feedbackBroadcast);
     sse.addEventListener("comment", commentBroadcast);
 
-    const queryMap = queryStringToObject(locate.search);
     const kakaoLogin = async () => {
-      const { data } = await api.kakao.token(queryMap.code);
+      const { data } = await api.kakao.token(query.code);
       if (data.ok) {
         setCookie("token", data.payload, { path: "/" });
         navigate("/");
@@ -74,7 +74,7 @@ function Layout() {
       return data;
     };
 
-    if (queryMap.code) {
+    if (query.code) {
       kakaoLogin().catch((e) => {
         errorSnack(e.message);
         navigate("/auth/signin");
@@ -118,7 +118,7 @@ function Layout() {
           });
       }
     }
-  }, [locate.pathname, cookies.token]);
+  }, [location.href, cookies.token]);
 
   return (
     <Stack sx={{ overflow: "hidden", minHeight: "100%" }}>

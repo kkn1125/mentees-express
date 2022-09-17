@@ -79,7 +79,7 @@ function Profile() {
       const { email, id, cover } = values;
       if (email !== users.email || id !== users.id || cover !== users.cover) {
         api.members
-          .updateByNum(
+          .update(
             String(users.num),
             {
               email,
@@ -98,6 +98,10 @@ function Profile() {
                 successSnack("프로필을 수정했습니다.");
               }
             });
+          })
+          .catch((e) => {
+            const { response } = e;
+            warningSnack(response.data.message);
           });
       } else {
         warningSnack("기존 데이터와 동일합니다.");

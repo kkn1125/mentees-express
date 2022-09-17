@@ -8,7 +8,7 @@ export default {
   findOne: (num: string) => {
     return axios.get(baseUrl + `/members/${num}`);
   },
-  findByNum: (id: string) => {
+  findById: (id: string) => {
     return axios.get(baseUrl + `/members/id/${id}`);
   },
   create: (user: User) => {
@@ -19,7 +19,7 @@ export default {
       },
     });
   },
-  updateByNum: (num: string, user: User, token: string) => {
+  update: (num: string, user: User, token: string) => {
     const formData = getFormData(user);
     return axios.put(baseUrl + `/members/${num}`, formData, {
       headers: {
@@ -27,7 +27,7 @@ export default {
       },
     });
   },
-  deleteByNum: (num: string) => {
+  delete: (num: string) => {
     return axios.delete(baseUrl + `/members/${num}`);
   },
 };

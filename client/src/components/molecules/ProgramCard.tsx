@@ -105,7 +105,7 @@ function ProgramCard({ contents, idx, comments }: ProgramCard) {
         </TextOverflow>
         <Stack direction='row' sx={{ gap: 1 }}>
           {tags.split("_").map((tag, idx) => (
-            <Chip key={tag + idx} label={tag} />
+            <Chip key={tag + idx} label={tag} color='info' />
           ))}
         </Stack>
         <Typography variant='body2'>

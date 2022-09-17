@@ -115,6 +115,7 @@ export const queryStringToObject = (query: string) =>
   Object.fromEntries(
     (query.startsWith("?") ? query.slice(1) : query)
       .split("&")
+      .filter((param) => param.trim())
       .map((q) => q.split("="))
   );
 

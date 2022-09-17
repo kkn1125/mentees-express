@@ -16,7 +16,7 @@ export default {
       },
     });
   },
-  updateByNum: (num: string, product: Product) => {
+  update: (num: string, product: Product) => {
     const formData = getFormData(product);
     return axios.put(baseUrl + `/products/${num}`, formData, {
       headers: {
@@ -24,7 +24,7 @@ export default {
       },
     });
   },
-  deleteByNum: (num: string) => {
+  delete: (num: string) => {
     return axios.delete(baseUrl + `/products/${num}`);
   },
 };

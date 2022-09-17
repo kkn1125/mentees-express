@@ -199,14 +199,17 @@ Member.update = (req, res) => {
     if (hash) {
       req.body.pw = hash;
     }
-
     sql.query(
       "UPDATE member SET ? WHERE ?",
       [req.body, req.params],
       (error: any, rows: any) => {
         try {
           if (error) {
-            throwException(errorMessage[500], 500, false);
+            if (error.code === "ER_DUP_ENTRY") {
+              throwException(errorMessage[409]("member"), 409, false);
+            } else {
+              throwException(errorMessage[500], 500, false);
+            }
           } else if (rows.affectedRows === 0) {
             throwException(errorMessage[404]("member"), 404, false);
           }

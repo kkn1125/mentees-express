@@ -1,7 +1,6 @@
-import { Button, SvgIcon, Tooltip } from "@mui/material";
 import LinkIcon from "@mui/icons-material/Link";
+import { Button, SvgIcon, Tooltip } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router-dom";
 
 function CopyButton({ url }: { url: string }) {
   const handleCopy = () => {

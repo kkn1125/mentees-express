@@ -12,7 +12,7 @@ import {
 import { useFormik } from "formik";
 import React, { useContext, useState } from "react";
 import { useCookies } from "react-cookie";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { api } from "../../apis";
 import { UserDispatchContext, userSave } from "../../contexts/UserProvider";
@@ -50,7 +50,6 @@ const validationSchema = yup.object({
 });
 
 function Signin() {
-  const locate = useLocation();
   const userDispatch = useContext(UserDispatchContext);
   const [cookies, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();

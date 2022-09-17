@@ -3,10 +3,19 @@ import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useQuery from "../../hooks/useQuery";
 
-function PaginationController({ totalPages }: { totalPages: number }) {
+function PaginationController({
+  totalPages,
+  handleLoading,
+}: {
+  totalPages: number;
+  handleLoading?: () => void;
+}) {
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
+  const query = useQuery();
+
+  const [page, setPage] = useState(Number(query.page));
   const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
     if (value > 1) {
@@ -23,7 +32,10 @@ function PaginationController({ totalPages }: { totalPages: number }) {
         size='large'
         count={totalPages}
         page={page}
-        onChange={handleChange}
+        onChange={(e, v) => {
+          handleLoading();
+          handleChange(e, v);
+        }}
       />
     </Stack>
   );

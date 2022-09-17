@@ -1,5 +1,6 @@
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   Alert,
   Box,
@@ -17,7 +18,15 @@ import parse, {
   Element,
   HTMLReactParserOptions,
 } from "html-react-parser";
-import React, { memo, useContext, useEffect, useMemo, useRef } from "react";
+import React, {
+  Fragment,
+  memo,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../apis";
 import CommentIcon from "../../components/atoms/CommentIcon";
@@ -51,6 +60,7 @@ function Detail() {
   const comments = useContext(CommentContext);
   const products = useContext(ProductContext);
   const { successSnack, errorSnack } = useSnack();
+  const [owner, setOwner] = useState(null);
 
   const product = useMemo<Product>(
     () => products.find((prod) => prod.num === Number(params.num)) || {},
@@ -90,6 +100,16 @@ function Detail() {
     };
   }, []);
 
+  useEffect(() => {
+    if (product.id) {
+      api.members.findById(product.id).then((result) => {
+        const { data } = result;
+        const { payload } = data;
+        setOwner(payload[0]);
+      });
+    }
+  }, [product]);
+
   const handleScroll = (e: Event) => {
     const heightGap = document.body.scrollHeight - window.innerHeight;
     if (imgRef.current) {
@@ -100,7 +120,7 @@ function Detail() {
   const handleRemoveProduct = () => {
     if (confirm("정말로 삭제하시겠습니까?")) {
       api.products
-        .deleteByNum(String(product.num))
+        .delete(String(product.num))
         .then(() => {
           successSnack("프로그램이 삭제 되었습니다.");
         })
@@ -159,7 +179,7 @@ function Detail() {
         <Divider sx={{ my: 2 }} />
         <UserProfile
           nickname={product.id}
-          src='https://avatars.githubusercontent.com/u/71887242?v=4'
+          src={owner?.cover || ""}
           time={new Date(product.regdate)}
         />
 
@@ -194,7 +214,7 @@ function Detail() {
         <Stack direction='row' justifyContent='space-between' sx={{ gap: 2 }}>
           <Stack direction='row' sx={{ gap: 2 }}>
             {(product.tags || "").split("_").map((tag, idx) => (
-              <Chip key={tag + idx} label={tag} />
+              <Chip key={tag + idx} label={tag} color='info' />
             ))}
           </Stack>
 
@@ -205,15 +225,23 @@ function Detail() {
               </IconButton>
             </Tooltip>
             {users.id === product.id && (
-              <Tooltip title='삭제하기' placement='bottom'>
-                <IconButton color='error' onClick={handleRemoveProduct}>
-                  <DeleteForeverIcon />
-                </IconButton>
-              </Tooltip>
+              <Fragment>
+                <Tooltip title='수정하기' placement='bottom'>
+                  <IconButton
+                    color='info'
+                    onClick={() => {
+                      navigate(`/mentees/form/${product.num}`);
+                    }}>
+                    <EditIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title='삭제하기' placement='bottom'>
+                  <IconButton color='error' onClick={handleRemoveProduct}>
+                    <DeleteForeverIcon />
+                  </IconButton>
+                </Tooltip>
+              </Fragment>
             )}
-            {/* <Button color='error' variant='contained'>
-              찜하기
-            </Button> */}
           </Stack>
         </Stack>
 

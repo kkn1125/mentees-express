@@ -1,3 +1,6 @@
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import EditIcon from "@mui/icons-material/Edit";
 import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import {
   Alert,
@@ -5,8 +8,10 @@ import {
   Chip,
   Container,
   Divider,
+  IconButton,
   Stack,
   SvgIcon,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import parse, {
@@ -14,7 +19,13 @@ import parse, {
   Element,
   HTMLReactParserOptions,
 } from "html-react-parser";
-import React, { useContext, useMemo } from "react";
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../../apis";
 import CommentIcon from "../../components/atoms/CommentIcon";
@@ -47,6 +58,7 @@ function FeedbackDetail() {
   const comments = useContext(CommentContext);
   const feedbacks = useContext(FeedbackContext);
   const { successSnack, errorSnack } = useSnack();
+  const [owner, setOwner] = useState(null);
 
   const feedback = useMemo<Feedback>(
     () => feedbacks.find((prod) => prod.num === Number(params.num)) || {},
@@ -77,10 +89,20 @@ function FeedbackDetail() {
     [comments]
   );
 
+  useEffect(() => {
+    if (feedback.author) {
+      api.members.findById(feedback.author).then((result) => {
+        const { data } = result;
+        const { payload } = data;
+        setOwner(payload[0]);
+      });
+    }
+  }, [feedback]);
+
   const handleRemoveFeedback = () => {
     if (confirm("정말로 삭제하시겠습니까?")) {
       api.feedbacks
-        .deleteByNum(String(feedback.num))
+        .delete(String(feedback.num))
         .then(() => {
           successSnack("프로그램이 삭제 되었습니다.");
         })
@@ -120,8 +142,8 @@ function FeedbackDetail() {
 
       <Divider sx={{ my: 2 }} />
       <UserProfile
-        nickname='kimson'
-        src='https://avatars.githubusercontent.com/u/71887242?v=4'
+        nickname={feedback.author}
+        src={owner?.cover || ""}
         time={new Date()}
       />
 
@@ -131,19 +153,37 @@ function FeedbackDetail() {
 
       <Divider sx={{ my: 2 }} />
 
-      <Stack direction='row' sx={{ gap: 2 }}>
+      <Stack direction='row' justifyContent='space-between' sx={{ gap: 2 }}>
         <Stack direction='row' sx={{ gap: 2 }}>
-          <Chip label='test' />
-          <Chip label='test' />
+          {(feedback.tags || "").split("_").map((tag, idx) => (
+            <Chip key={tag + idx} label={tag} color='warning' />
+          ))}
         </Stack>
-        {users.id === feedback.author && (
-          <Button
-            variant='contained'
-            color='error'
-            onClick={handleRemoveFeedback}>
-            삭제
-          </Button>
-        )}
+        <Stack direction='row' sx={{ gap: 2 }}>
+          <Tooltip title='이 프로그램 신청하기' placement='bottom'>
+            <IconButton color='success'>
+              <CheckCircleOutlineIcon />
+            </IconButton>
+          </Tooltip>
+          {users.id === feedback.author && (
+            <Fragment>
+              <Tooltip title='수정하기' placement='bottom'>
+                <IconButton
+                  color='info'
+                  onClick={() => {
+                    navigate(`/mentees/feedback/form/${feedback.num}`);
+                  }}>
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title='삭제하기' placement='bottom'>
+                <IconButton color='error' onClick={handleRemoveFeedback}>
+                  <DeleteForeverIcon />
+                </IconButton>
+              </Tooltip>
+            </Fragment>
+          )}
+        </Stack>
       </Stack>
 
       <Stack
@@ -160,12 +200,10 @@ function FeedbackDetail() {
         </Button>
       </Stack>
 
-      <Typography variant='h6' gutterBottom sx={{ mt: 5, fontWeight: 700 }}>
-        Comments [{filteredList.length}]
-      </Typography>
       <Stack sx={{ gap: 3 }}>
         {/* 댓글 작성 폼 */}
         <CommentItem
+          counts={filteredList.length}
           pnum={feedback.num}
           cnum={0}
           order={0}

@@ -16,7 +16,7 @@ export default {
       },
     });
   },
-  updateByNum: (num: string, feedback: Feedback) => {
+  update: (num: string, feedback: Feedback) => {
     const formData = getFormData(feedback);
     return axios.put(baseUrl + `/feedbacks/${num}`, formData, {
       headers: {
@@ -24,7 +24,7 @@ export default {
       },
     });
   },
-  deleteByNum: (num: string) => {
+  delete: (num: string) => {
     return axios.delete(baseUrl + `/feedbacks/${num}`);
   },
 };
